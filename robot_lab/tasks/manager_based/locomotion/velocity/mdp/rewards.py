@@ -33,6 +33,55 @@ def track_lin_vel_xy_exp(
     reward = torch.exp(-lin_vel_error / std**2)
     reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
     return reward
+##------------------Task Rewards-------------------
+# 1. Reward for tracking along the wall
+def along_wall_tracking(env: ManagerBasedRLEnv, asset_cfg=SceneEntityCfg("robot")) -> torch.Tensor:
+    asset: RigidObject = env.scene[asset_cfg.name]
+    v_xy = asset.data.root_lin_vel_w[:, :2]
+    t_w = env.command_manager.data["wall_tangent"][:, :2]
+    v_cmd = env.command_manager.data["v_cmd"].squeeze(-1)
+    reward = torch.minimum(torch.sum(v_xy * t_w, dim=-1), v_cmd)
+    return reward
+
+
+# 2. Reward for maintaining distance from the wall
+def wall_distance_regulation(env: ManagerBasedRLEnv, d_star=0.3, asset_cfg=SceneEntityCfg("robot")) -> torch.Tensor:
+    asset: RigidObject = env.scene[asset_cfg.name]
+    base_pos = asset.data.root_link_pos_w
+    n_w = env.command_manager.data["wall_normal"]
+    p_ref = env.command_manager.data["wall_ref"]
+    d_perp = torch.sum(n_w * (base_pos - p_ref), dim=-1)
+    return -torch.abs(d_perp - d_star)
+
+
+# 3. Reward for body orientation alignment
+def body_orientation_alignment(env: ManagerBasedRLEnv, side="left", asset_cfg=SceneEntityCfg("robot")) -> torch.Tensor:
+    asset: RigidObject = env.scene[asset_cfg.name]
+    quat = asset.data.root_link_quat_w
+    y_axis = math_utils.quat_apply(quat, torch.tensor([0, 1, 0], device=quat.device))
+    n_w = env.command_manager.data["wall_normal"]
+    y_align = torch.sum((y_axis if side == "left" else -y_axis) * n_w, dim=-1)
+    return (0.5 * y_align + 0.5) ** 2
+
+
+# 4. Reward for keeping contact force within a desired range
+def contact_force_window(env: ManagerBasedRLEnv, fmin=10.0, fmax=40.0, asset_cfg=SceneEntityCfg("robot")) -> torch.Tensor:
+    f = env.scene.sensors["contact_forces"].data.net_forces_w.norm(dim=-1).sum(dim=-1)
+    over = torch.clamp(f - fmax, min=0.0)
+    under = torch.clamp(fmin - f, min=0.0)
+    return -(over ** 2 + under ** 2)
+
+
+# 5. Penalty for foot clearance near edges
+def foot_edge_clearance_penalty(env: ManagerBasedRLEnv, edge_threshold=0.05, asset_cfg=SceneEntityCfg("robot")) -> torch.Tensor:
+    asset: RigidObject = env.scene[asset_cfg.name]
+    foot_pos = asset.data.body_link_pos_w[:, asset.feet_body_ids, :2]
+    dist = env.terrain_manager.distance_to_edge(foot_pos)  # Needs implementation
+    near_edge = (dist < edge_threshold).float()
+    contacts = asset.data.feet_contact_forces[:, asset.feet_body_ids].norm(dim=-1) > 1.0
+    return -(near_edge * contacts.float()).sum(dim=-1)
+# ----------------------------------------------------
+
 
 
 def track_ang_vel_z_exp(
