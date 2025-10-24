@@ -125,3 +125,13 @@ The project follows the Isaac Lab extension layout, with modularized folders for
 
 
 ---
+
+## 🙏 Acknowledgements
+
+This project draws inspiration and partial structure from the excellent open-source repository:
+
+- [**fan-ziqi/robot_lab**](https://github.com/fan-ziqi/robot_lab)
+
+We sincerely thank the original authors for their open-source contributions.  
+Their work on **Isaac Lab-based robot simulation and reinforcement learning framework** provided valuable reference and a solid foundation for this project’s development.
+
