@@ -3,11 +3,11 @@
 
 from isaaclab.utils import configclass
 
-from .rough_env_cfg import UnitreeGo2RoughEnvCfg
+from .rough_env_cfg import UnitreeGo2TraverseEnvCfg
 
 
 @configclass
-class UnitreeGo2FlatEnvCfg(UnitreeGo2RoughEnvCfg):
+class UnitreeGo2FlatEnvCfg(UnitreeGo2TraverseEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()

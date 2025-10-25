@@ -126,30 +126,6 @@ def joint_pos_penalty(
     return reward
 
 
-def wheel_vel_penalty(
-    env: ManagerBasedRLEnv,
-    sensor_cfg: SceneEntityCfg,
-    command_name: str,
-    velocity_threshold: float,
-    command_threshold: float,
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
-) -> torch.Tensor:
-    asset: Articulation = env.scene[asset_cfg.name]
-    cmd = torch.linalg.norm(env.command_manager.get_command(command_name), dim=1)
-    body_vel = torch.linalg.norm(asset.data.root_lin_vel_b[:, :2], dim=1)
-    joint_vel = torch.abs(asset.data.joint_vel[:, asset_cfg.joint_ids])
-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
-    in_air = contact_sensor.compute_first_air(env.step_dt)[:, sensor_cfg.body_ids]
-    running_reward = torch.sum(in_air * joint_vel, dim=1)
-    standing_reward = torch.sum(joint_vel, dim=1)
-    reward = torch.where(
-        torch.logical_or(cmd > command_threshold, body_vel > velocity_threshold),
-        running_reward,
-        standing_reward,
-    )
-    return reward
-
-
 class GaitReward(ManagerTermBase):
     """Gait enforcing reward term for quadrupeds.
 

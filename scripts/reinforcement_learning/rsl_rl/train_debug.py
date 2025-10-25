@@ -28,9 +28,9 @@ sys.path.insert(0, ROOT)
 
 sys.argv = [
     "train.py",
-    "--task=RobotLab-Isaac-Velocity-Flat-Unitree-Go2-v0",
-    "--headless",
-    "--num_envs=64",
+    "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
+    # "--headless",
+    "--num_envs=32",
     "--max_iterations=10000",
 ]
 
