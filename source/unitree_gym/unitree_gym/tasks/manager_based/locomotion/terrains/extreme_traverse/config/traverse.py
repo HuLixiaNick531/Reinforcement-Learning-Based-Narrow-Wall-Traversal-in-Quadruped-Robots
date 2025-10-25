@@ -4,9 +4,9 @@ from ...extreme_traverse import *
 
 TRAVERSE_TERRAINS_CFG = TraverseTerrainGeneratorCfg(
     class_type=TraverseTerrainGenerator,
-    size=(10.0, 4.0),
+    size=(10.0, 6.0),
     border_width=0.0,
-    num_rows=4,
+    num_rows=8,
     num_cols=8,
     horizontal_scale=0.05,
     vertical_scale=0.005,

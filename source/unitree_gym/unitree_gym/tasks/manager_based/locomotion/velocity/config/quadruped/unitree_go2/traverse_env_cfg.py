@@ -55,8 +55,8 @@ class UnitreeGo2TraverseEnvCfg(LocomotionVelocityGo2EnvCfg):
         # ------------------------------Events------------------------------
         self.events.randomize_reset_base.params = {
             "pose_range": {
-                "x": (-0.5, 0.5),
-                "y": (-0.5, 0.5),
+                "x": (2.0, 3.0),
+                "y": (-0.0, 0.0),
                 "z": (0.0, 0.2),
                 "roll": (-0.31, 0.31),
                 "pitch": (-0.31, 0.31),

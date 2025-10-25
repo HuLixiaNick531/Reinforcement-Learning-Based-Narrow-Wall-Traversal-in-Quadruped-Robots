@@ -3,7 +3,7 @@
 
 from isaaclab.utils import configclass
 
-from .rough_env_cfg import UnitreeGo2TraverseEnvCfg
+from .traverse_env_cfg import UnitreeGo2TraverseEnvCfg
 
 
 @configclass
