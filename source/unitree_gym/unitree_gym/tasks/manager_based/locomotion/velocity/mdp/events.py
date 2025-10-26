@@ -199,52 +199,39 @@ def _randomize_prop_by_op(
     return data
 
 
-# def spawn_walls(env, env_ids: torch.Tensor | None, gap_y=0.8, ahead_x=1.0, wall_size=(5.0, 0.2, 1.5), z=0.75):
-#     """
-#     在场景中生成两面“平行墙”。支持 per-env 版本（如果拿得到 env_origins），
-#     拿不到时至少生成全局的两面墙，确保可见。
-#     """
-#     print("[EVENT] spawn_walls: start")
+def reset_root_state(
+    env: ManagerBasedEnv,
+    env_ids: torch.Tensor,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+    margin: float = 0.6,     # 距离入口前移的距离（米）
+):
+    asset: Articulation = env.scene[asset_cfg.name]
+    gen_cfg = env.scene.terrain.cfg.terrain_generator
+    # 你的“两面墙”子地形 cfg，里头有 corridor_start_x / platform_height 等
+    sub_cfg = gen_cfg.sub_terrains["two_walls"]   # 如果你用 sub_terrains 字典，请按键名取
 
-#     # resolve environment ids
-#     if env_ids is None:
-#         env_ids = torch.arange(env.scene.num_envs, device="cpu")
-#     else:
-#         env_ids = env_ids.cpu()
+    root_states = asset.data.default_root_state[env_ids].clone()   # (N, 13)
+    origins = env.scene.env_origins[env_ids].clone()               # (N, 3)
 
-#     wall = sim_utils.CuboidCfg(
-#         size=wall_size,
-#         rigid_props=sim_utils.RigidBodyPropertiesCfg(kinematic_enabled=True),
-#         collision_props=sim_utils.CollisionPropertiesCfg(),
-#         visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.9, 0.1, 0.1)),
-#     )
+    # 入口前 margin 米（务必保证 margin < corridor_start_x，避免刷进墙体）
+    start_x_local = float(sub_cfg.corridor_start_x) - float(margin)
 
-#     scene = env.scene
+    # 放置到“各自 tile 的入口前”
+    pos = root_states[:, 0:3]
+    pos[:, 0] = origins[:, 0] + start_x_local          # x：入口前
+    pos[:, 1] = origins[:, 1] + 0.0                    # y：走廊中线
+    # z：略高于平台，避免脚底穿插；也可直接用默认 root_states 的 z
+    platform_h = float(getattr(sub_cfg, "platform_height", 0.0))
+    pos[:, 2] = torch.maximum(
+        pos[:, 2],
+        torch.tensor(platform_h + 0.02, device=env.device)
+    )
 
-#     # 1) 全局兜底（一定能在 Stage 看到）：
-#     wall.func("/World/WallsTest/Wall1", wall, translation=(ahead_x,  gap_y, z))
-#     wall.func("/World/WallsTest/Wall2", wall, translation=(ahead_x, -gap_y, z))
-#     print("[EVENT] spawn_walls: spawned /World/WallsTest/Wall1,2")
+    # 朝向：默认保持原来的朝向（root_states[:,3:7]）。若需要固定面向 +x，可自行设定 yaw→quat
+    quat = root_states[:, 3:7]
 
-#     # 2) 每个并行 env 一对墙（若拿得到 env 原点）
-#     origins = getattr(scene, "env_origins", None) or getattr(getattr(scene, "terrain", None), "env_origins", None)
-#     if origins is not None:
-#         try:
-#             n = len(origins)
-#         except Exception:
-#             n = int(origins.shape[0])
-#         for i, o in enumerate(origins):
-#             ox, oy, oz = float(o[0]), float(o[1]), float(o[2])
-#             wall.func(f"/World/envs/env_{i}/Walls/Wall1", wall, translation=(ox + ahead_x, oy + gap_y, oz + z))
-#             wall.func(f"/World/envs/env_{i}/Walls/Wall2", wall, translation=(ox + ahead_x, oy - gap_y, oz + z))
-#         print(f"[EVENT] spawn_walls: spawned per-env walls for {n} envs")
-#     else:
-#         print("[EVENT] spawn_walls: WARNING env_origins not found; skip per-env walls")
-
-#     # 如需传感器能“看到”墙（可选）：
-#     hs = getattr(scene, "height_scanner", None)
-#     hsb = getattr(scene, "height_scanner_base", None)
-#     if hs is not None:
-#         hs.mesh_prim_paths = list(set(list(hs.mesh_prim_paths) + ["/World/WallsTest"]))
-#     if hsb is not None:
-#         hsb.mesh_prim_paths = list(set(list(hsb.mesh_prim_paths) + ["/World/WallsTest"]))
+    # 写入仿真
+    asset.write_root_pose_to_sim(torch.cat([pos, quat], dim=-1), env_ids=env_ids)
+    # 速度清零（避免初始抖动）
+    lin_ang_zero = torch.zeros_like(root_states[:, 7:13])
+    asset.write_root_velocity_to_sim(lin_ang_zero, env_ids=env_ids)

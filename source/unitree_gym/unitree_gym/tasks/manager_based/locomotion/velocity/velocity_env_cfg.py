@@ -24,6 +24,7 @@ from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.sensors import ContactSensorCfg, RayCasterCfg, patterns
 from isaaclab.terrains import TerrainImporterCfg
+from ..terrains.traverse_terrain_importer import TraverseTerrainImporter
 from isaaclab.utils import configclass
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
@@ -47,6 +48,7 @@ class MySceneGo2Cfg(InteractiveSceneCfg):
 
     # ground terrain
     terrain = TerrainImporterCfg(
+        class_type=TraverseTerrainImporter,
         prim_path="/World/ground",
         terrain_type="generator",
         terrain_generator=TRAVERSE_TERRAINS_CFG,
@@ -349,6 +351,15 @@ class EventCfg:
             "distribution": "uniform",
         },
     )
+
+    # reset_root_state = EventTerm(
+    #     func=mdp.reset_root_state,
+    #     mode="reset",
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("robot"),  # 哪个资产
+    #         "margin": -0.6,                         # 距离墙入口前移 0.6 米
+    #     }
+    # )
 
     randomize_reset_base = EventTerm(
         func=mdp.reset_root_state_uniform,

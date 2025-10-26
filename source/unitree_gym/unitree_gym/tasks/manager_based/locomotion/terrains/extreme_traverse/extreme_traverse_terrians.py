@@ -65,69 +65,69 @@ def random_uniform_terrain(
 
 @traverse_field_to_mesh
 def two_walls_terrain(
-    difficulty: float,
-    cfg,          # 若担心循环依赖，可省类型注解
+    difficulty: float, 
+    cfg, 
     num_goals: int,
-):
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """单段双墙走廊地形（风格与 parkour_hurdle_terrain 一致）"""
+
+    # ------------------------ 基本分辨率设置 ------------------------
     hs = cfg.horizontal_scale
     vs = cfg.vertical_scale
+    width_pixels  = int(cfg.size[0] / hs)
+    length_pixels = int(cfg.size[1] / hs)
+    mid_y = length_pixels // 2
 
-    # 分辨率（像素）
-    width_px  = int(cfg.size[0] / hs)
-    length_px = int(cfg.size[1] / hs)
-    mid_y     = length_px // 2
+    # ------------------------ 初始化地形 ------------------------
+    height_field_raw = np.zeros((width_pixels, length_pixels))
+    platform_len = round(cfg.corridor_start_x / hs)
+    platform_height = round(cfg.platform_height / vs)
+    height_field_raw[0:platform_len, :] = platform_height
 
-    # 平台
-    h_raw = np.zeros((width_px, length_px), dtype=np.int16)
-    base_h_idx = int(round(cfg.platform_height / vs))
-    h_raw[:, :] = base_h_idx
+    # ------------------------ 参数设置 ------------------------
+    wall_t_px = max(1, int(round(cfg.wall_thickness / hs)))
+    base_gap_px = int(round(cfg.corridor_width / hs))
+    wall_h_idx = round(cfg.wall_height / vs)
+    seg_len = round(cfg.corridor_length / hs)
 
-    # 参数（米 → 像素 / 索引）
-    wall_h_idx   = int(round(cfg.wall_height / vs))
-    wall_t_px    = max(1, int(round(cfg.wall_thickness / hs)))
-    corridor_w_px= max(1, int(round(cfg.corridor_width / hs)))
-    x0_px        = int(round(cfg.corridor_start_x / hs))
-    x1_px        = min(width_px, x0_px + int(round(cfg.corridor_length / hs)))
+    # ------------------------ 构造单段走廊 ------------------------
+    x0 = platform_len
+    x1 = x0 + seg_len
+    half_gap = base_gap_px // 2
 
-    # 两面平行墙（沿 x 方向）
-    half_gap = corridor_w_px // 2
-    # 左墙在中线左侧： [mid_y - half_gap - wall_t, mid_y - half_gap)
+    # 左右墙的像素范围
     yL0 = max(0, mid_y - half_gap - wall_t_px)
     yL1 = max(0, mid_y - half_gap)
-    # 右墙在中线右侧： [mid_y + half_gap, mid_y + half_gap + wall_t)
-    yR0 = min(length_px, mid_y + half_gap)
-    yR1 = min(length_px, mid_y + half_gap + wall_t_px)
+    yR0 = min(length_pixels, mid_y + half_gap)
+    yR1 = min(length_pixels, mid_y + half_gap + wall_t_px)
 
-    x0_px = max(0, x0_px)
-    x1_px = max(x0_px + 1, x1_px)  # 至少 1 像素长度
-
-    # 抬高到墙顶高度
+    # 填充墙高
     if yL0 < yL1:
-        h_raw[x0_px:x1_px, yL0:yL1] = base_h_idx + wall_h_idx
+        height_field_raw[x0:x1, yL0:yL1] = platform_height + wall_h_idx
     if yR0 < yR1:
-        h_raw[x0_px:x1_px, yR0:yR1] = base_h_idx + wall_h_idx
+        height_field_raw[x0:x1, yR0:yR1] = platform_height + wall_h_idx
 
-    # 目标点（像素坐标）
-    g0 = np.array([max(0, x0_px - int(round(0.6 / hs))), mid_y], dtype=np.int32)                # 入口前
-    g1 = np.array([(x0_px + x1_px) // 2,                mid_y], dtype=np.int32)                 # 走廊中点
-    g2 = np.array([min(width_px - 1, x1_px + int(round(0.6 / hs))), mid_y], dtype=np.int32)     # 出口后
+    # ------------------------ 目标点 ------------------------
+    goals = np.zeros((num_goals, 2))
+    goal_heights = np.ones((num_goals)) * platform_height
 
-    goals_px = np.stack([g0, g1, g2], axis=0)
-    # 根据 num_goals 截断/补齐
-    if num_goals <= goals_px.shape[0]:
-        goals_px = goals_px[:num_goals]
-    else:
-        pad = np.repeat(goals_px[-1][None, :], num_goals - goals_px.shape[0], axis=0)
-        goals_px = np.concatenate([goals_px, pad], axis=0)
+    # goal[0]: 入口前
+    goals[0] = [platform_len - 1, mid_y]
+    # goal[1]: 走廊中点
+    goals[1] = [x0 + seg_len // 2, mid_y]
+    # goal[2]: 走廊出口后
+    goals[-1] = [min(width_pixels - 1, x1 + int(0.6 / hs)), mid_y]
 
-    # 目标高度（按地面/平台高度；如需墙顶目标可自行改）
-    goal_h_idx = h_raw[goals_px[:, 0], goals_px[:, 1]].astype(np.int16)
+    # ------------------------ 边缘填充 ------------------------
+    height_field_raw = padding_height_field_raw(height_field_raw, cfg)
 
-    # 可选：粗糙度；若想走廊完全平整，建议关闭 apply_roughness 或在这里跳过走廊区域
-    if getattr(cfg, "apply_roughness", False):
-        h_raw = random_uniform_terrain(difficulty, cfg, h_raw)
+    # ------------------------ 可选粗糙度 ------------------------
+    if cfg.apply_roughness:
+        height_field_raw = random_uniform_terrain(difficulty, cfg, height_field_raw)
 
-    # 返回：高度场（索引单位）、goals（米）、goal_heights（米）
-    goals_m   = goals_px.astype(np.float32) * hs
-    goal_h_m  = goal_h_idx.astype(np.float32) * vs
-    return h_raw, goals_m, goal_h_m
+    # ------------------------ 输出转换（像素→米） ------------------------
+    return (
+        height_field_raw,
+        goals * cfg.horizontal_scale,
+        goal_heights * cfg.vertical_scale,
+    )

@@ -53,22 +53,23 @@ class UnitreeGo2TraverseEnvCfg(LocomotionVelocityGo2EnvCfg):
         self.actions.joint_pos.joint_names = self.joint_names
 
         # ------------------------------Events------------------------------
+        
         self.events.randomize_reset_base.params = {
             "pose_range": {
-                "x": (2.0, 3.0),
-                "y": (-0.0, 0.0),
-                "z": (0.0, 0.2),
-                "roll": (-0.31, 0.31),
-                "pitch": (-0.31, 0.31),
+                "x": (0.0, 0.0),
+                "y": (0.0, 0.0),
+                "z": (0.17, 0.2),
+                "roll": (0.0, 0.0),
+                "pitch": (0.0, 0.0),
                 "yaw": (-3.14, 3.14),
             },
             "velocity_range": {
-                "x": (-0.5, 0.5),
-                "y": (-0.5, 0.5),
-                "z": (-0.5, 0.5),
-                "roll": (-0.5, 0.5),
-                "pitch": (-0.5, 0.5),
-                "yaw": (-0.5, 0.5),
+                "x": (0.0, 0.0),
+                "y": (0.0, 0.0),
+                "z": (0.0, 0.0),
+                "roll": (0.0, 0.0),
+                "pitch": (0.0, 0.0),
+                "yaw": (0.0, 0.0),
             },
         }
         self.events.randomize_rigid_body_mass_base.params["asset_cfg"].body_names = [self.base_link_name]
@@ -76,7 +77,6 @@ class UnitreeGo2TraverseEnvCfg(LocomotionVelocityGo2EnvCfg):
         self.events.randomize_com_positions.params["asset_cfg"].body_names = [self.base_link_name]
         self.events.randomize_apply_external_force_torque.params["asset_cfg"].body_names = [self.base_link_name]
 
-        # self.events.spawn_walls
 
         # ------------------------------Rewards------------------------------
         # General
