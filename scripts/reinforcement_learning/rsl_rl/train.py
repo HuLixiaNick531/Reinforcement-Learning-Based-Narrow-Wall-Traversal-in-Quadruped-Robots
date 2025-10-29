@@ -79,13 +79,14 @@ from isaaclab_tasks.utils.hydra import hydra_task_config
 
 import unitree_gym.tasks  # noqa: F401
 
+from custom_actor_critic import CustomActorCritic
+
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 torch.backends.cudnn.deterministic = False
 torch.backends.cudnn.benchmark = False
 
-# ManagerBasedRLEnvCfg: /home/pp/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_rl_env.py
-# /home/pp/IsaacLab/source/isaaclab/test/envs/check_manager_based_env_anymal_locomotion.py
+VISUALIZATION = False
 
 @hydra_task_config(args_cli.task, args_cli.agent)
 def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
@@ -150,10 +151,97 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     # wrap around environment for rsl-rl
     env = RslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
 
+    if VISUALIZATION:
+        print("\n===== Environment Space Info =====")
+        print("Observation space:", env.observation_space)
+        if hasattr(env.observation_space, "shape"):
+            print("Observation shape:", env.observation_space.shape)
+
+        print("Action space:", env.action_space)
+        if hasattr(env.action_space, "shape"):
+            print("Action dim:", env.action_space.shape)
+        if hasattr(env.action_space, "low"):
+            print("Action low:", env.action_space.low)
+        if hasattr(env.action_space, "high"):
+            print("Action high:", env.action_space.high)
+        print("==================================\n")
+
     # create runner from rsl-rl
     runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=log_dir, device=agent_cfg.device)
     # write git state to logs
     runner.add_git_repo_to_log(__file__)
+
+    custom_ac = CustomActorCritic(env).to(agent_cfg.device)
+    if hasattr(runner, "algo") and hasattr(runner.algo, "actor_critic"):
+        runner.algo.actor_critic = custom_ac
+    if hasattr(runner, "actor_critic"):
+        runner.actor_critic = custom_ac
+
+    if VISUALIZATION:
+        import torch
+        import torch.nn as nn
+        from torch.utils.tensorboard import SummaryWriter
+
+        class _ACGraphWrapper(nn.Module):
+            """Wrap CustomActorCritic so add_graph can trace (mu, V) from (policy_obs, critic_obs)."""
+            def __init__(self, ac: nn.Module):
+                super().__init__()
+                self.ac = ac
+
+            def forward(self, pol_obs: torch.Tensor, cri_obs: torch.Tensor):
+                # Adjust these lines if your CustomActorCritic uses different attribute names
+                feat_p = self.ac.policy_encoder(pol_obs)
+                feat_c = self.ac.critic_encoder(cri_obs)
+                h = self.ac.actor.backbone(feat_p)      # e.g., MLP trunk inside DiagGaussianActor
+                mu = self.ac.actor.mu_head(h)           # policy mean
+                V  = self.ac.critic(feat_c)             # state value
+                return mu, V
+
+        # Build dummy inputs matching env.observation_space exactly.
+        def _space_dummy(space, device):
+            assert isinstance(space, gym.spaces.Box), "Only Box observation spaces are supported here."
+            shape = space.shape
+            return torch.zeros((1, *shape), dtype=torch.float32, device=device)
+
+        if isinstance(env.observation_space, gym.spaces.Dict):
+            pol_space = env.observation_space["policy"]
+            cri_space = env.observation_space["critic"]
+            pol_dummy = _space_dummy(pol_space, agent_cfg.device)
+            cri_dummy = _space_dummy(cri_space, agent_cfg.device)
+        else:
+            # Single-branch obs goes to both policy and critic
+            base_space = env.observation_space
+            pol_dummy = _space_dummy(base_space, agent_cfg.device)
+            cri_dummy = _space_dummy(base_space, agent_cfg.device)
+
+        tb_dir = os.path.join(log_dir, "tb_graph")
+        os.makedirs(tb_dir, exist_ok=True)
+
+        wrapper = _ACGraphWrapper(custom_ac).to(agent_cfg.device).eval()
+
+        try:
+            with SummaryWriter(tb_dir) as w:
+                # verbose=False avoids large console logs
+                w.add_graph(wrapper, (pol_dummy, cri_dummy), verbose=False)
+            print(f"[INFO] TensorBoard graph written to: {tb_dir}")
+            print("       Run: tensorboard --logdir", log_dir)
+        except Exception as e:
+            print(f"[WARN] add_graph failed: {e}")
+
+        onnx_path = os.path.join(log_dir, "ac_model_graph.onnx")
+        torch.onnx.export(
+            _ACGraphWrapper(custom_ac).to(agent_cfg.device).eval(),
+            (pol_dummy, cri_dummy),
+            onnx_path,
+            input_names=["policy_obs","critic_obs"],
+            output_names=["mu","V"],
+            opset_version=17,
+            do_constant_folding=True,
+            dynamic_axes={"policy_obs":{0:"batch"},"critic_obs":{0:"batch"},
+                        "mu":{0:"batch"},"V":{0:"batch"}}
+        )
+        print("[INFO] Exported ONNX to:", onnx_path)
+
     # load the checkpoint
     if agent_cfg.resume or agent_cfg.algorithm.class_name == "Distillation":
         print(f"[INFO]: Loading model checkpoint from: {resume_path}")
