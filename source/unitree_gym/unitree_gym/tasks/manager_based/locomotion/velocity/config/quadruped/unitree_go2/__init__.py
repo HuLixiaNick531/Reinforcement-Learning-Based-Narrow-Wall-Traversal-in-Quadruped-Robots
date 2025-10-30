@@ -4,7 +4,6 @@
 import gymnasium as gym
 
 from . import agents
-
 ##
 # Register Gym environments.
 ##
@@ -12,7 +11,7 @@ from . import agents
 
 gym.register(
     id="Isaac-Traverse-Walls-Unitree-Go2-v0",
-    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    entry_point="unitree_gym.tasks.manager_based.locomotion.velocity.envs:TraverseManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": f"{__name__}.traverse_env_cfg:UnitreeGo2TraverseEnvCfg",

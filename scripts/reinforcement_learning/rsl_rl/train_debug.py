@@ -30,7 +30,7 @@ sys.argv = [
     "train.py",
     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
     # "--headless",
-    "--num_envs=32",
+    "--num_envs=1024",
     "--max_iterations=10000",
 ]
 

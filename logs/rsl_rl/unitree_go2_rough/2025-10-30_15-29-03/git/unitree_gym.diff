@@ -1,0 +1,3283 @@
+--- git status ---
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/reinforcement_learning/rsl_rl/__pycache__/train.cpython-311.pyc
+	modified:   scripts/reinforcement_learning/rsl_rl/train.py
+	modified:   scripts/reinforcement_learning/rsl_rl/train_debug.py
+	modified:   source/unitree_gym/data/Robots/unitree/go2_description/urdf/go2_description.urdf
+	modified:   source/unitree_gym/unitree_gym/assets/__pycache__/unitree.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/assets/unitree.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__init__.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/__init__.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/velocity_env_cfg.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__init__.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/__init__.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/traverse_env_cfg.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/traverse_env_cfg.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__init__.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/__init__.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/events.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/observations.cpython-311.pyc
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/rewards.cpython-311.pyc
+	deleted:    source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/commands.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/events.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/observations.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/rewards.py
+	deleted:    source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__init__.py
+	deleted:    source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__pycache__/__init__.cpython-311.pyc
+	deleted:    source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/anymal.py
+	modified:   source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/velocity_env_cfg.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	logs/rsl_rl/unitree_go2_rough/2025-10-30_15-07-08/
+	logs/rsl_rl/unitree_go2_rough/2025-10-30_15-08-30/
+	logs/rsl_rl/unitree_go2_rough/2025-10-30_15-12-11/
+	logs/rsl_rl/unitree_go2_rough/2025-10-30_15-13-20/
+	logs/rsl_rl/unitree_go2_rough/2025-10-30_15-29-03/
+	outputs/2025-10-30/
+	scripts/reinforcement_learning/rsl_rl/__pycache__/vecenv_wrapper.cpython-311.pyc
+	scripts/reinforcement_learning/rsl_rl/vecenv_wrapper.py
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/actuators/
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/envs/
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/managers/
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/terminations.cpython-311.pyc
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/terminations.py
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/traverse_actions/
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/traverse_commands/
+	source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/traverses/
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/scripts/reinforcement_learning/rsl_rl/__pycache__/train.cpython-311.pyc b/scripts/reinforcement_learning/rsl_rl/__pycache__/train.cpython-311.pyc
+index 7beebb5..1f835eb 100644
+Binary files a/scripts/reinforcement_learning/rsl_rl/__pycache__/train.cpython-311.pyc and b/scripts/reinforcement_learning/rsl_rl/__pycache__/train.cpython-311.pyc differ
+diff --git a/scripts/reinforcement_learning/rsl_rl/train.py b/scripts/reinforcement_learning/rsl_rl/train.py
+index 0611967..0be4f33 100644
+--- a/scripts/reinforcement_learning/rsl_rl/train.py
++++ b/scripts/reinforcement_learning/rsl_rl/train.py
+@@ -77,7 +77,11 @@ from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
+ from isaaclab_tasks.utils import get_checkpoint_path
+ from isaaclab_tasks.utils.hydra import hydra_task_config
+ 
+-import unitree_gym.tasks  # noqa: F401
++from unitree_gym.tasks.manager_based.locomotion.velocity.envs import TraverseManagerBasedRLEnv
++from source.unitree_gym.unitree_gym.tasks.manager_based.locomotion.velocity.envs import TraverseManagerBasedRLEnv
++from .vecenv_wrapper import TraverseRslRlVecEnvWrapper
++
++# import unitree_gym.tasks  # noqa: F401
+ 
+ torch.backends.cuda.matmul.allow_tf32 = True
+ torch.backends.cudnn.allow_tf32 = True
+@@ -88,7 +92,7 @@ torch.backends.cudnn.benchmark = False
+ # /home/pp/IsaacLab/source/isaaclab/test/envs/check_manager_based_env_anymal_locomotion.py
+ 
+ @hydra_task_config(args_cli.task, args_cli.agent)
+-def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
++def main(env_cfg: TraverseManagerBasedRLEnv | ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
+     """Train with RSL-RL agent."""
+     # override configurations with non-hydra CLI arguments
+     agent_cfg = cli_args.update_rsl_rl_cfg(agent_cfg, args_cli)
+@@ -147,8 +151,9 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
+         print_dict(video_kwargs, nesting=4)
+         env = gym.wrappers.RecordVideo(env, **video_kwargs)
+ 
++    env = env.unwrapped
+     # wrap around environment for rsl-rl
+-    env = RslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
++    env = TraverseRslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
+ 
+     # create runner from rsl-rl
+     runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=log_dir, device=agent_cfg.device)
+diff --git a/scripts/reinforcement_learning/rsl_rl/train_debug.py b/scripts/reinforcement_learning/rsl_rl/train_debug.py
+index ba0607b..ac539e5 100644
+--- a/scripts/reinforcement_learning/rsl_rl/train_debug.py
++++ b/scripts/reinforcement_learning/rsl_rl/train_debug.py
+@@ -30,7 +30,7 @@ sys.argv = [
+     "train.py",
+     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
+     # "--headless",
+-    "--num_envs=32",
++    "--num_envs=1024",
+     "--max_iterations=10000",
+ ]
+ 
+diff --git a/source/unitree_gym/data/Robots/unitree/go2_description/urdf/go2_description.urdf b/source/unitree_gym/data/Robots/unitree/go2_description/urdf/go2_description.urdf
+index bebab29..4556421 100644
+--- a/source/unitree_gym/data/Robots/unitree/go2_description/urdf/go2_description.urdf
++++ b/source/unitree_gym/data/Robots/unitree/go2_description/urdf/go2_description.urdf
+@@ -758,4 +758,4 @@
+   </joint>
+   <link name="front_camera">
+   </link>
+-</robot>
+\ No newline at end of file
++</robot>
+diff --git a/source/unitree_gym/unitree_gym/assets/__pycache__/unitree.cpython-311.pyc b/source/unitree_gym/unitree_gym/assets/__pycache__/unitree.cpython-311.pyc
+index 9f9df27..7f8d3e3 100644
+Binary files a/source/unitree_gym/unitree_gym/assets/__pycache__/unitree.cpython-311.pyc and b/source/unitree_gym/unitree_gym/assets/__pycache__/unitree.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/assets/unitree.py b/source/unitree_gym/unitree_gym/assets/unitree.py
+index 06f8476..acc0be5 100644
+--- a/source/unitree_gym/unitree_gym/assets/unitree.py
++++ b/source/unitree_gym/unitree_gym/assets/unitree.py
+@@ -39,7 +39,7 @@ UNITREE_GO2_CFG = ArticulationCfg(
+         ),
+     ),
+     init_state=ArticulationCfg.InitialStateCfg(
+-        pos=(0.0, 0.0, 0.08),
++        pos=(0.0, 0.0, 0.2),
+         joint_pos={
+             ".*L_hip_joint": 0.0,
+             ".*R_hip_joint": -0.0,
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__init__.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__init__.py
+index 1051ef2..35a22e2 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__init__.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__init__.py
+@@ -13,3 +13,4 @@ These environments are based on the `legged_gym` environments provided by Rudin
+ Reference:
+     https://github.com/leggedrobotics/legged_gym
+ """
++from .velocity_env_cfg import LocomotionVelocityGo2EnvCfg
+\ No newline at end of file
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/__init__.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/__init__.cpython-311.pyc
+index 7f73285..eef4be7 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/__init__.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/velocity_env_cfg.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/velocity_env_cfg.cpython-311.pyc
+index 994423a..a76e956 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/velocity_env_cfg.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/__pycache__/velocity_env_cfg.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__init__.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__init__.py
+index f68bf37..79df042 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__init__.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__init__.py
+@@ -4,7 +4,6 @@
+ import gymnasium as gym
+ 
+ from . import agents
+-
+ ##
+ # Register Gym environments.
+ ##
+@@ -12,7 +11,7 @@ from . import agents
+ 
+ gym.register(
+     id="Isaac-Traverse-Walls-Unitree-Go2-v0",
+-    entry_point="isaaclab.envs:ManagerBasedRLEnv",
++    entry_point="unitree_gym.tasks.manager_based.locomotion.velocity.envs:TraverseManagerBasedRLEnv",
+     disable_env_checker=True,
+     kwargs={
+         "env_cfg_entry_point": f"{__name__}.traverse_env_cfg:UnitreeGo2TraverseEnvCfg",
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/__init__.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/__init__.cpython-311.pyc
+index 80a950d..35de6c3 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/__init__.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/traverse_env_cfg.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/traverse_env_cfg.cpython-311.pyc
+index 69e8021..2c58823 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/traverse_env_cfg.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/__pycache__/traverse_env_cfg.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/traverse_env_cfg.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/traverse_env_cfg.py
+index 17798ba..7b959a7 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/traverse_env_cfg.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/config/quadruped/unitree_go2/traverse_env_cfg.py
+@@ -36,127 +36,127 @@ class UnitreeGo2TraverseEnvCfg(LocomotionVelocityGo2EnvCfg):
+         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/" + self.base_link_name
+         self.scene.height_scanner_base.prim_path = "{ENV_REGEX_NS}/Robot/" + self.base_link_name
+ 
+-        # ------------------------------Observations------------------------------
+-        self.observations.policy.base_lin_vel.scale = 2.0
+-        self.observations.policy.base_ang_vel.scale = 0.25
+-        self.observations.policy.joint_pos.scale = 1.0
+-        self.observations.policy.joint_vel.scale = 0.05
+-        self.observations.policy.base_lin_vel = None
+-        self.observations.policy.height_scan = None
+-        self.observations.policy.joint_pos.params["asset_cfg"].joint_names = self.joint_names
+-        self.observations.policy.joint_vel.params["asset_cfg"].joint_names = self.joint_names
+-
+-        # ------------------------------Actions------------------------------
+-        # reduce action scale
+-        self.actions.joint_pos.scale = {".*_hip_joint": 0.125, "^(?!.*_hip_joint).*": 0.25}
+-        self.actions.joint_pos.clip = {".*": (-100.0, 100.0)}
+-        self.actions.joint_pos.joint_names = self.joint_names
+-
+-        # ------------------------------Events------------------------------
++        # # ------------------------------Observations------------------------------
++        # self.observations.policy.base_lin_vel.scale = 2.0
++        # self.observations.policy.base_ang_vel.scale = 0.25
++        # self.observations.policy.joint_pos.scale = 1.0
++        # self.observations.policy.joint_vel.scale = 0.05
++        # self.observations.policy.base_lin_vel = None
++        # self.observations.policy.height_scan = None
++        # self.observations.policy.joint_pos.params["asset_cfg"].joint_names = self.joint_names
++        # self.observations.policy.joint_vel.params["asset_cfg"].joint_names = self.joint_names
++
++        # # ------------------------------Actions------------------------------
++        # # reduce action scale
++        # self.actions.joint_pos.scale = {".*_hip_joint": 0.125, "^(?!.*_hip_joint).*": 0.25}
++        # self.actions.joint_pos.clip = {".*": (-100.0, 100.0)}
++        # self.actions.joint_pos.joint_names = self.joint_names
++
++        # # ------------------------------Events------------------------------
+         
+-        self.events.randomize_reset_base.params = {
+-            "pose_range": {
+-                "x": (0.0, 0.0),
+-                "y": (0.0, 0.0),
+-                "z": (0.17, 0.2),
+-                "roll": (0.0, 0.0),
+-                "pitch": (0.0, 0.0),
+-                "yaw": (-3.14, 3.14),
+-            },
+-            "velocity_range": {
+-                "x": (0.0, 0.0),
+-                "y": (0.0, 0.0),
+-                "z": (0.0, 0.0),
+-                "roll": (0.0, 0.0),
+-                "pitch": (0.0, 0.0),
+-                "yaw": (0.0, 0.0),
+-            },
+-        }
+-        self.events.randomize_rigid_body_mass_base.params["asset_cfg"].body_names = [self.base_link_name]
+-        self.events.randomize_rigid_body_mass_others.params["asset_cfg"].body_names = [self.foot_link_name]
+-        self.events.randomize_com_positions.params["asset_cfg"].body_names = [self.base_link_name]
+-        self.events.randomize_apply_external_force_torque.params["asset_cfg"].body_names = [self.base_link_name]
+-
+-
+-        # ------------------------------Rewards------------------------------
+-        # General
+-        self.rewards.is_terminated.weight = 0
+-
+-        # Root penalties
+-        self.rewards.lin_vel_z_l2.weight = -2.0
+-        self.rewards.ang_vel_xy_l2.weight = -0.05
+-        self.rewards.flat_orientation_l2.weight = 0
+-        self.rewards.base_height_l2.weight = 0
+-        self.rewards.base_height_l2.params["target_height"] = 0.33
+-        self.rewards.base_height_l2.params["asset_cfg"].body_names = [self.base_link_name]
+-        self.rewards.body_lin_acc_l2.weight = 0
+-        self.rewards.body_lin_acc_l2.params["asset_cfg"].body_names = [self.base_link_name]
+-
+-        # Joint penalties
+-        self.rewards.joint_torques_l2.weight = -2.5e-5
+-        self.rewards.joint_vel_l2.weight = 0
+-        self.rewards.joint_acc_l2.weight = -2.5e-7
+-        # self.rewards.create_joint_deviation_l1_rewterm("joint_deviation_hip_l1", -0.2, [".*_hip_joint"])
+-        self.rewards.joint_pos_limits.weight = -5.0
+-        self.rewards.joint_vel_limits.weight = 0
+-        self.rewards.joint_power.weight = -2e-5
+-        self.rewards.stand_still.weight = -2.0
+-        self.rewards.joint_pos_penalty.weight = -1.0
+-        self.rewards.joint_mirror.weight = -0.05
+-        self.rewards.joint_mirror.params["mirror_joints"] = [
+-            ["FR_(hip|thigh|calf).*", "RL_(hip|thigh|calf).*"],
+-            ["FL_(hip|thigh|calf).*", "RR_(hip|thigh|calf).*"],
+-        ]
+-
+-        # Action penalties
+-        self.rewards.action_rate_l2.weight = -0.01
+-
+-        # Contact sensor
+-        self.rewards.undesired_contacts.weight = -1.0
+-        self.rewards.undesired_contacts.params["sensor_cfg"].body_names = [f"^(?!.*{self.foot_link_name}).*"]
+-        self.rewards.contact_forces.weight = -1.5e-4
+-        self.rewards.contact_forces.params["sensor_cfg"].body_names = [self.foot_link_name]
+-
+-        # Velocity-tracking rewards
+-        self.rewards.track_lin_vel_xy_exp.weight = 3.0
+-        self.rewards.track_ang_vel_z_exp.weight = 1.5
+-
+-        # Others
+-        self.rewards.feet_air_time.weight = 0.1
+-        self.rewards.feet_air_time.params["threshold"] = 0.5
+-        self.rewards.feet_air_time.params["sensor_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_air_time_variance.weight = -1.0
+-        self.rewards.feet_air_time_variance.params["sensor_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_contact.weight = 0
+-        self.rewards.feet_contact.params["sensor_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_contact_without_cmd.weight = 0.1
+-        self.rewards.feet_contact_without_cmd.params["sensor_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_stumble.weight = 0
+-        self.rewards.feet_stumble.params["sensor_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_slide.weight = -0.1
+-        self.rewards.feet_slide.params["sensor_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_slide.params["asset_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_height.weight = 0
+-        self.rewards.feet_height.params["target_height"] = 0.05
+-        self.rewards.feet_height.params["asset_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_height_body.weight = -5.0
+-        self.rewards.feet_height_body.params["target_height"] = -0.2
+-        self.rewards.feet_height_body.params["asset_cfg"].body_names = [self.foot_link_name]
+-        self.rewards.feet_gait.weight = 0.5
+-        self.rewards.feet_gait.params["synced_feet_pair_names"] = (("FL_foot", "RR_foot"), ("FR_foot", "RL_foot"))
+-        self.rewards.upward.weight = 1.0
++        # self.events.randomize_reset_base.params = {
++        #     "pose_range": {
++        #         "x": (0.0, 0.0),
++        #         "y": (0.0, 0.0),
++        #         "z": (0.17, 0.2),
++        #         "roll": (0.0, 0.0),
++        #         "pitch": (0.0, 0.0),
++        #         "yaw": (-3.14, 3.14),
++        #     },
++        #     "velocity_range": {
++        #         "x": (0.0, 0.0),
++        #         "y": (0.0, 0.0),
++        #         "z": (0.0, 0.0),
++        #         "roll": (0.0, 0.0),
++        #         "pitch": (0.0, 0.0),
++        #         "yaw": (0.0, 0.0),
++        #     },
++        # }
++        # self.events.randomize_rigid_body_mass_base.params["asset_cfg"].body_names = [self.base_link_name]
++        # self.events.randomize_rigid_body_mass_others.params["asset_cfg"].body_names = [self.foot_link_name]
++        # self.events.randomize_com_positions.params["asset_cfg"].body_names = [self.base_link_name]
++        # self.events.randomize_apply_external_force_torque.params["asset_cfg"].body_names = [self.base_link_name]
++
++
++        # # ------------------------------Rewards------------------------------
++        # # General
++        # self.rewards.is_terminated.weight = 0
++
++        # # Root penalties
++        # self.rewards.lin_vel_z_l2.weight = -2.0
++        # self.rewards.ang_vel_xy_l2.weight = -0.05
++        # self.rewards.flat_orientation_l2.weight = 0
++        # self.rewards.base_height_l2.weight = 0
++        # self.rewards.base_height_l2.params["target_height"] = 0.33
++        # self.rewards.base_height_l2.params["asset_cfg"].body_names = [self.base_link_name]
++        # self.rewards.body_lin_acc_l2.weight = 0
++        # self.rewards.body_lin_acc_l2.params["asset_cfg"].body_names = [self.base_link_name]
++
++        # # Joint penalties
++        # self.rewards.joint_torques_l2.weight = -2.5e-5
++        # self.rewards.joint_vel_l2.weight = 0
++        # self.rewards.joint_acc_l2.weight = -2.5e-7
++        # # self.rewards.create_joint_deviation_l1_rewterm("joint_deviation_hip_l1", -0.2, [".*_hip_joint"])
++        # self.rewards.joint_pos_limits.weight = -5.0
++        # self.rewards.joint_vel_limits.weight = 0
++        # self.rewards.joint_power.weight = -2e-5
++        # self.rewards.stand_still.weight = -2.0
++        # self.rewards.joint_pos_penalty.weight = -1.0
++        # self.rewards.joint_mirror.weight = -0.05
++        # self.rewards.joint_mirror.params["mirror_joints"] = [
++        #     ["FR_(hip|thigh|calf).*", "RL_(hip|thigh|calf).*"],
++        #     ["FL_(hip|thigh|calf).*", "RR_(hip|thigh|calf).*"],
++        # ]
++
++        # # Action penalties
++        # self.rewards.action_rate_l2.weight = -0.01
++
++        # # Contact sensor
++        # self.rewards.undesired_contacts.weight = -1.0
++        # self.rewards.undesired_contacts.params["sensor_cfg"].body_names = [f"^(?!.*{self.foot_link_name}).*"]
++        # self.rewards.contact_forces.weight = -1.5e-4
++        # self.rewards.contact_forces.params["sensor_cfg"].body_names = [self.foot_link_name]
++
++        # # Velocity-tracking rewards
++        # self.rewards.track_lin_vel_xy_exp.weight = 3.0
++        # self.rewards.track_ang_vel_z_exp.weight = 1.5
++
++        # # Others
++        # self.rewards.feet_air_time.weight = 0.1
++        # self.rewards.feet_air_time.params["threshold"] = 0.5
++        # self.rewards.feet_air_time.params["sensor_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_air_time_variance.weight = -1.0
++        # self.rewards.feet_air_time_variance.params["sensor_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_contact.weight = 0
++        # self.rewards.feet_contact.params["sensor_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_contact_without_cmd.weight = 0.1
++        # self.rewards.feet_contact_without_cmd.params["sensor_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_stumble.weight = 0
++        # self.rewards.feet_stumble.params["sensor_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_slide.weight = -0.1
++        # self.rewards.feet_slide.params["sensor_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_slide.params["asset_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_height.weight = 0
++        # self.rewards.feet_height.params["target_height"] = 0.05
++        # self.rewards.feet_height.params["asset_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_height_body.weight = -5.0
++        # self.rewards.feet_height_body.params["target_height"] = -0.2
++        # self.rewards.feet_height_body.params["asset_cfg"].body_names = [self.foot_link_name]
++        # self.rewards.feet_gait.weight = 0.5
++        # self.rewards.feet_gait.params["synced_feet_pair_names"] = (("FL_foot", "RR_foot"), ("FR_foot", "RL_foot"))
++        # self.rewards.upward.weight = 1.0
+ 
+         # If the weight of rewards is 0, set rewards to None
+         if self.__class__.__name__ == "UnitreeGo2TraverseEnvCfg":
+             self.disable_zero_weight_rewards()
+ 
+-        # ------------------------------Terminations------------------------------
+-        # self.terminations.illegal_contact.params["sensor_cfg"].body_names = [self.base_link_name, ".*_hip"]
+-        self.terminations.illegal_contact = None
++        # # ------------------------------Terminations------------------------------
++        # # self.terminations.illegal_contact.params["sensor_cfg"].body_names = [self.base_link_name, ".*_hip"]
++        # self.terminations.illegal_contact = None
+ 
+-        # ------------------------------Curriculums------------------------------
+-        # self.curriculum.command_levels.params["range_multiplier"] = (0.2, 1.0)
+-        self.curriculum.command_levels = None
++        # # ------------------------------Curriculums------------------------------
++        # # self.curriculum.command_levels.params["range_multiplier"] = (0.2, 1.0)
++        # self.curriculum.command_levels = None
+ 
+         # ------------------------------Commands------------------------------
+         # self.commands.base_velocity.ranges.lin_vel_x = (-1.0, 1.0)
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__init__.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__init__.py
+index 30d08cd..0d3af3e 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__init__.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__init__.py
+@@ -8,11 +8,9 @@
+ 
+ """This sub-module contains the functions that are specific to the locomotion environments."""
+ 
+-from isaaclab.envs.mdp import *  # noqa: F401, F403
+-from isaaclab_tasks.manager_based.locomotion.velocity.mdp import *  # noqa: F401, F403
+-
+-from .commands import *  # noqa: F401, F403
+-from .curriculums import *  # noqa: F401, F403
+-from .events import *  # noqa: F401, F403
+-from .observations import *  # noqa: F401, F403
+-from .rewards import *  # noqa: F401, F403
++from .traverses import *  # noqa: F401, F403
++from .rewards import * 
++from .terminations import *
++from .events import *
++from .observations import *
++from .traverse_commands import *
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/__init__.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/__init__.cpython-311.pyc
+index ac51d7a..f05e8ea 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/__init__.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/events.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/events.cpython-311.pyc
+index e72244e..7873cba 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/events.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/events.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/observations.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/observations.cpython-311.pyc
+index 0e3cf79..9776edb 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/observations.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/observations.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/rewards.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/rewards.cpython-311.pyc
+index 611bc42..43a2daf 100644
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/rewards.cpython-311.pyc and b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/__pycache__/rewards.cpython-311.pyc differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/commands.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/commands.py
+deleted file mode 100644
+index ef2b00e..0000000
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/commands.py
++++ /dev/null
+@@ -1,127 +0,0 @@
+-# Copyright (c) 2024-2025 Ziqi Fan
+-# SPDX-License-Identifier: Apache-2.0
+-
+-from __future__ import annotations
+-
+-import torch
+-from typing import TYPE_CHECKING, Sequence
+-
+-from isaaclab.managers import CommandTerm, CommandTermCfg
+-from isaaclab.utils import configclass
+-
+-import unitree_gym.tasks.manager_based.locomotion.velocity.mdp as mdp
+-
+-if TYPE_CHECKING:
+-    from isaaclab.envs import ManagerBasedEnv
+-
+-
+-class UniformThresholdVelocityCommand(mdp.UniformVelocityCommand):
+-    """Command generator that generates a velocity command in SE(2) from uniform distribution with threshold."""
+-
+-    cfg: mdp.UniformThresholdVelocityCommandCfg
+-    """The configuration of the command generator."""
+-
+-    def _resample_command(self, env_ids: Sequence[int]):
+-        super()._resample_command(env_ids)
+-        # set small commands to zero
+-        self.vel_command_b[env_ids, :2] *= (torch.norm(self.vel_command_b[env_ids, :2], dim=1) > 0.2).unsqueeze(1)
+-
+-
+-@configclass
+-class UniformThresholdVelocityCommandCfg(mdp.UniformVelocityCommandCfg):
+-    """Configuration for the uniform threshold velocity command generator."""
+-
+-    class_type: type = UniformThresholdVelocityCommand
+-
+-
+-class DiscreteCommandController(CommandTerm):
+-    """
+-    Command generator that assigns discrete commands to environments.
+-
+-    Commands are stored as a list of predefined integers.
+-    The controller maps these commands by their indices (e.g., index 0 -> 10, index 1 -> 20).
+-    """
+-
+-    cfg: DiscreteCommandControllerCfg
+-    """Configuration for the command controller."""
+-
+-    def __init__(self, cfg: DiscreteCommandControllerCfg, env: ManagerBasedEnv):
+-        """
+-        Initialize the command controller.
+-
+-        Args:
+-            cfg: The configuration of the command controller.
+-            env: The environment object.
+-        """
+-        # Initialize the base class
+-        super().__init__(cfg, env)
+-
+-        # Validate that available_commands is non-empty
+-        if not self.cfg.available_commands:
+-            raise ValueError("The available_commands list cannot be empty.")
+-
+-        # Ensure all elements are integers
+-        if not all(isinstance(cmd, int) for cmd in self.cfg.available_commands):
+-            raise ValueError("All elements in available_commands must be integers.")
+-
+-        # Store the available commands
+-        self.available_commands = self.cfg.available_commands
+-
+-        # Create buffers to store the command
+-        # -- command buffer: stores discrete action indices for each environment
+-        self.command_buffer = torch.zeros(self.num_envs, dtype=torch.int32, device=self.device)
+-
+-        # -- current_commands: stores a snapshot of the current commands (as integers)
+-        self.current_commands = [self.available_commands[0]] * self.num_envs  # Default to the first command
+-
+-    def __str__(self) -> str:
+-        """Return a string representation of the command controller."""
+-        return (
+-            "DiscreteCommandController:\n"
+-            f"\tNumber of environments: {self.num_envs}\n"
+-            f"\tAvailable commands: {self.available_commands}\n"
+-        )
+-
+-    """
+-    Properties
+-    """
+-
+-    @property
+-    def command(self) -> torch.Tensor:
+-        """Return the current command buffer. Shape is (num_envs, 1)."""
+-        return self.command_buffer
+-
+-    """
+-    Implementation specific functions.
+-    """
+-
+-    def _update_metrics(self):
+-        """Update metrics for the command controller."""
+-        pass
+-
+-    def _resample_command(self, env_ids: Sequence[int]):
+-        """Resample commands for the given environments."""
+-        sampled_indices = torch.randint(
+-            len(self.available_commands), (len(env_ids),), dtype=torch.int32, device=self.device
+-        )
+-        sampled_commands = torch.tensor(
+-            [self.available_commands[idx.item()] for idx in sampled_indices], dtype=torch.int32, device=self.device
+-        )
+-        self.command_buffer[env_ids] = sampled_commands
+-
+-    def _update_command(self):
+-        """Update and store the current commands."""
+-        self.current_commands = self.command_buffer.tolist()
+-
+-
+-@configclass
+-class DiscreteCommandControllerCfg(CommandTermCfg):
+-    """Configuration for the discrete command controller."""
+-
+-    class_type: type = DiscreteCommandController
+-
+-    available_commands: list[int] = []
+-    """
+-    List of available discrete commands, where each element is an integer.
+-    Example: [10, 20, 30, 40, 50]
+-    """
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/events.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/events.py
+index 0ad8247..feba5ab 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/events.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/events.py
+@@ -1,200 +1,281 @@
+-# Copyright (c) 2024-2025 Ziqi Fan
+-# SPDX-License-Identifier: Apache-2.0
++
+ 
+ from __future__ import annotations
+ 
+ import torch
+ from typing import TYPE_CHECKING, Literal
+-import isaaclab.sim as sim_utils
+-
++import omni.usd
++from isaaclab.assets import RigidObject,Articulation, AssetBase
++from isaaclab.managers import SceneEntityCfg, ManagerTermBase
+ import isaaclab.utils.math as math_utils
+-from isaaclab.assets import Articulation, RigidObject
+-from isaaclab.managers import SceneEntityCfg
++from isaaclab.envs.mdp.events import _randomize_prop_by_op
++from isaaclab.actuators import DCMotor
++from ..actuators import TraverseDCMotor
++from isaaclab.sensors import RayCasterCamera
++from isaaclab.utils.math import quat_from_euler_xyz
+ 
+ if TYPE_CHECKING:
+-    from isaaclab.envs import ManagerBasedEnv
++    from isaaclab.envs import  ManagerBasedEnv
++    from isaaclab.managers import EventTermCfg
+ 
+-
+-def randomize_rigid_body_inertia(
++def reset_joints_by_offset(
+     env: ManagerBasedEnv,
+-    env_ids: torch.Tensor | None,
+-    asset_cfg: SceneEntityCfg,
+-    inertia_distribution_params: tuple[float, float],
+-    operation: Literal["add", "scale", "abs"],
+-    distribution: Literal["uniform", "log_uniform", "gaussian"] = "uniform",
++    env_ids: torch.Tensor,
++    position_range: tuple[float, float],
++    velocity_range: tuple[float, float],
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+ ):
+-    """Randomize the inertia tensors of the bodies by adding, scaling, or setting random values.
+-
+-    This function allows randomizing only the diagonal inertia tensor components (xx, yy, zz) of the bodies.
+-    The function samples random values from the given distribution parameters and adds, scales, or sets the values
+-    into the physics simulation based on the operation.
++    """Reset the robot joints with offsets around the default position and velocity by the given ranges.
+ 
+-    .. tip::
+-        This function uses CPU tensors to assign the body inertias. It is recommended to use this function
+-        only during the initialization of the environment.
++    This function samples random values from the given ranges and biases the default joint positions and velocities
++    by these values. The biased values are then set into the physics simulation.
+     """
+     # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject | Articulation = env.scene[asset_cfg.name]
+-
+-    # resolve environment ids
+-    if env_ids is None:
+-        env_ids = torch.arange(env.scene.num_envs, device="cpu")
+-    else:
+-        env_ids = env_ids.cpu()
++    asset: Articulation = env.scene[asset_cfg.name]
+ 
+-    # resolve body indices
+-    if asset_cfg.body_ids == slice(None):
+-        body_ids = torch.arange(asset.num_bodies, dtype=torch.int, device="cpu")
+-    else:
+-        body_ids = torch.tensor(asset_cfg.body_ids, dtype=torch.int, device="cpu")
++    # get default joint state
++    joint_pos = asset.data.default_joint_pos[env_ids].clone()
++    joint_vel = asset.data.default_joint_vel[env_ids].clone()
+ 
+-    # get the current inertia tensors of the bodies (num_assets, num_bodies, 9 for articulations or 9 for rigid objects)
+-    inertias = asset.root_physx_view.get_inertias()
+-
+-    # apply randomization on default values
+-    inertias[env_ids[:, None], body_ids, :] = asset.data.default_inertia[env_ids[:, None], body_ids, :].clone()
+-
+-    # randomize each diagonal element (xx, yy, zz -> indices 0, 4, 8)
+-    for idx in [0, 4, 8]:
+-        # Extract and randomize the specific diagonal element
+-        randomized_inertias = _randomize_prop_by_op(
+-            inertias[:, :, idx],
+-            inertia_distribution_params,
+-            env_ids,
+-            body_ids,
+-            operation,
+-            distribution,
+-        )
+-        # Assign the randomized values back to the inertia tensor
+-        inertias[env_ids[:, None], body_ids, idx] = randomized_inertias
++    # bias these values randomly
++    joint_pos += math_utils.sample_uniform(*position_range, joint_pos.shape, joint_pos.device)
++    joint_vel += math_utils.sample_uniform(*velocity_range, joint_vel.shape, joint_vel.device)
++    # set into the physics simulation
++    asset.write_joint_state_to_sim(joint_pos, joint_vel, env_ids=env_ids)
+ 
+-    # set the inertia tensors into the physics simulation
+-    asset.root_physx_view.set_inertias(inertias, env_ids)
+ 
+-
+-def randomize_com_positions(
++def reset_root_state(
++    env: ManagerBasedEnv,
++    env_ids: torch.Tensor,
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    offset: float = 3.0
++):
++    asset: Articulation = env.scene[asset_cfg.name]
++    terrain_gen_cfg = env.scene.terrain.cfg.terrain_generator
++    root_states = asset.data.default_root_state[env_ids].clone()
++    origin = env.scene.env_origins[env_ids].clone()
++    origin[:,-1] = 0
++    positions = root_states[:, 0:3] + origin - \
++        torch.tensor((terrain_gen_cfg.size[1] + offset, 0, 0)).to(env.device)
++    asset.write_root_pose_to_sim(torch.cat([positions, root_states[:, 3:7]], dim=-1), env_ids=env_ids)
++    asset.write_root_velocity_to_sim(root_states[:, 7:13] , env_ids=env_ids) ## it mush need for init vel
++
++def randomize_actuator_gains(
+     env: ManagerBasedEnv,
+     env_ids: torch.Tensor | None,
+     asset_cfg: SceneEntityCfg,
+-    com_distribution_params: tuple[float, float],
+-    operation: Literal["add", "scale", "abs"],
++    stiffness_distribution_params: tuple[float, float] | None = None,
++    damping_distribution_params: tuple[float, float] | None = None,
++    operation: Literal["add", "scale", "abs"] = "abs",
+     distribution: Literal["uniform", "log_uniform", "gaussian"] = "uniform",
+ ):
+-    """Randomize the center of mass (COM) positions for the rigid bodies.
++    asset: Articulation = env.scene[asset_cfg.name]
+ 
+-    This function allows randomizing the COM positions of the bodies in the physics simulation. The positions can be
+-    randomized by adding, scaling, or setting random values sampled from the specified distribution.
+-
+-    .. tip::
+-        This function is intended for initialization or offline adjustments, as it modifies physics properties directly.
++    if env_ids is None:
++        env_ids = torch.arange(env.scene.num_envs, device=asset.device)
+ 
+-    Args:
+-        env (ManagerBasedEnv): The simulation environment.
+-        env_ids (torch.Tensor | None): Specific environment indices to apply randomization, or None for all environments.
+-        asset_cfg (SceneEntityCfg): The configuration for the target asset whose COM will be randomized.
+-        com_distribution_params (tuple[float, float]): Parameters of the distribution (e.g., min and max for uniform).
+-        operation (Literal["add", "scale", "abs"]): The operation to apply for randomization.
+-        distribution (Literal["uniform", "log_uniform", "gaussian"]): The distribution to sample random values from.
+-    """
+-    # Extract the asset (Articulation or RigidObject)
+-    asset: RigidObject | Articulation = env.scene[asset_cfg.name]
++    def randomize(data: torch.Tensor, params: tuple[float, float]) -> torch.Tensor:
++        return _randomize_prop_by_op(
++            data, params, dim_0_ids=None, dim_1_ids=actuator_indices, operation=operation, distribution=distribution
++        )
+ 
+-    # Resolve environment indices
++    for actuator in asset.actuators.values():
++        if isinstance(asset_cfg.joint_ids, slice):
++            actuator_indices = slice(None)
++            if isinstance(actuator.joint_indices, slice):
++                global_indices = slice(None)
++            else:
++                global_indices = torch.tensor(actuator.joint_indices, device=asset.device)
++        elif isinstance(actuator.joint_indices, slice):
++            global_indices = actuator_indices = torch.tensor(asset_cfg.joint_ids, device=asset.device)
++        else:
++            actuator_joint_indices = torch.tensor(actuator.joint_indices, device=asset.device)
++            asset_joint_ids = torch.tensor(asset_cfg.joint_ids, device=asset.device)
++            # the indices of the joints in the actuator that have to be randomized
++            actuator_indices = torch.nonzero(torch.isin(actuator_joint_indices, asset_joint_ids)).view(-1)
++            if len(actuator_indices) == 0:
++                continue
++            global_indices = actuator_joint_indices[actuator_indices]
++        if stiffness_distribution_params is not None:
++            stiffness = actuator.stiffness[env_ids].clone()
++            stiffness[:, actuator_indices] = asset.data.default_joint_stiffness[env_ids][:, global_indices].clone()
++            randomize(stiffness, stiffness_distribution_params)
++            actuator.stiffness[env_ids] = stiffness
++            if isinstance(actuator, DCMotor) or isinstance(actuator, TraverseDCMotor):
++                asset.write_joint_stiffness_to_sim(stiffness, joint_ids=actuator.joint_indices, env_ids=env_ids)
++        # Randomize damping
++        if damping_distribution_params is not None:
++            damping = actuator.damping[env_ids].clone()
++            damping[:, actuator_indices] = asset.data.default_joint_damping[env_ids][:, global_indices].clone()
++            randomize(damping, damping_distribution_params)
++            actuator.damping[env_ids] = damping
++            if isinstance(actuator, DCMotor) or isinstance(actuator, TraverseDCMotor):
++                asset.write_joint_damping_to_sim(damping, joint_ids=actuator.joint_indices, env_ids=env_ids)
++
++def randomize_rigid_body_com(
++    env: ManagerBasedEnv,
++    env_ids: torch.Tensor | None,
++    com_range: dict[str, tuple[float, float]],
++    asset_cfg: SceneEntityCfg,
++):
++    asset: Articulation = env.scene[asset_cfg.name]
++    # resolve environment ids
+     if env_ids is None:
+         env_ids = torch.arange(env.scene.num_envs, device="cpu")
+     else:
+         env_ids = env_ids.cpu()
+ 
+-    # Resolve body indices
++    # resolve body indices
+     if asset_cfg.body_ids == slice(None):
+         body_ids = torch.arange(asset.num_bodies, dtype=torch.int, device="cpu")
+     else:
+         body_ids = torch.tensor(asset_cfg.body_ids, dtype=torch.int, device="cpu")
+ 
+-    # Get the current COM offsets (num_assets, num_bodies, 3)
+-    com_offsets = asset.root_physx_view.get_coms()
+-
+-    for dim_idx in range(3):  # Randomize x, y, z independently
+-        randomized_offset = _randomize_prop_by_op(
+-            com_offsets[:, :, dim_idx],
+-            com_distribution_params,
+-            env_ids,
+-            body_ids,
+-            operation,
+-            distribution,
+-        )
+-        com_offsets[env_ids[:, None], body_ids, dim_idx] = randomized_offset[env_ids[:, None], body_ids]
+-
+-    # Set the randomized COM offsets into the simulation
+-    asset.root_physx_view.set_coms(com_offsets, env_ids)
+-
+-
+-"""
+-Internal helper functions.
+-"""
+-
++    # sample random CoM values
++    range_list = [com_range.get(key, (0.0, 0.0)) for key in ["x", "y", "z"]]
++    ranges = torch.tensor(range_list, device="cpu")
++    rand_samples = math_utils.sample_uniform(ranges[:, 0], ranges[:, 1], (len(env_ids), 3), device="cpu").unsqueeze(1)
+ 
+-def _randomize_prop_by_op(
+-    data: torch.Tensor,
+-    distribution_parameters: tuple[float | torch.Tensor, float | torch.Tensor],
+-    dim_0_ids: torch.Tensor | None,
+-    dim_1_ids: torch.Tensor | slice,
+-    operation: Literal["add", "scale", "abs"],
+-    distribution: Literal["uniform", "log_uniform", "gaussian"],
+-) -> torch.Tensor:
+-    """Perform data randomization based on the given operation and distribution.
++    # get the current com of the bodies (num_assets, num_bodies)
++    coms = asset.root_physx_view.get_coms().clone()
++    # Randomize the com in range
++    coms[:, body_ids, :3] += rand_samples
++    # Set the new coms
++    asset.root_physx_view.set_coms(coms, env_ids)
+ 
+-    Args:
+-        data: The data tensor to be randomized. Shape is (dim_0, dim_1).
+-        distribution_parameters: The parameters for the distribution to sample values from.
+-        dim_0_ids: The indices of the first dimension to randomize.
+-        dim_1_ids: The indices of the second dimension to randomize.
+-        operation: The operation to perform on the data. Options: 'add', 'scale', 'abs'.
+-        distribution: The distribution to sample the random values from. Options: 'uniform', 'log_uniform'.
++def push_by_setting_velocity(
++    env: ManagerBasedEnv,
++    env_ids: torch.Tensor,
++    velocity_range: dict[str, tuple[float, float]],
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++):  
++    asset: RigidObject | Articulation = env.scene[asset_cfg.name]
++    vel_w = asset.data.root_vel_w[env_ids]
++    range_list = [velocity_range.get(key, (0.0, 0.0)) for key in ["x", "y", "z", "roll", "pitch", "yaw"]]
++    ranges = torch.tensor(range_list, device=asset.device)
++    random_noise = math_utils.sample_uniform(ranges[:, 0], ranges[:, 1], vel_w.shape, device=asset.device)
++    vel_w[:,:2] = random_noise[:,:2]
++    vel_w[:,2:] += random_noise[:,2:]
++    asset.write_root_velocity_to_sim(vel_w, env_ids=env_ids)
++
++def random_camera_position(
++    env: ManagerBasedEnv,
++    env_ids: torch.Tensor | None,
++    sensor_cfg: SceneEntityCfg,
++    pos_noise_range: dict[str,tuple[float,float]] | None = None,
++    rot_noise_range: dict[str,tuple[float,float]] | None = None,
++    convention: str = 'ros',
++):
++    """
++    prestartup
++    """
++    camera_sensor: RayCasterCamera = env.scene.sensors[sensor_cfg.name]
+ 
+-    Returns:
+-        The data tensor after randomization. Shape is (dim_0, dim_1).
++    init_rot = torch.tensor(camera_sensor.cfg.offset.rot).repeat(env.num_envs,1).to(env.device)
+ 
+-    Raises:
+-        NotImplementedError: If the operation or distribution is not supported.
+-    """
+-    # resolve shape
+-    # -- dim 0
+-    if dim_0_ids is None:
+-        n_dim_0 = data.shape[0]
+-        dim_0_ids = slice(None)
+-    else:
+-        n_dim_0 = len(dim_0_ids)
+-        if not isinstance(dim_1_ids, slice):
+-            dim_0_ids = dim_0_ids[:, None]
+-    # -- dim 1
+-    if isinstance(dim_1_ids, slice):
+-        n_dim_1 = data.shape[1]
+-    else:
+-        n_dim_1 = len(dim_1_ids)
+-
+-    # resolve the distribution
+-    if distribution == "uniform":
+-        dist_fn = math_utils.sample_uniform
+-    elif distribution == "log_uniform":
+-        dist_fn = math_utils.sample_log_uniform
+-    elif distribution == "gaussian":
+-        dist_fn = math_utils.sample_gaussian
++    if pos_noise_range is not None: 
++        pos_range_list = [pos_noise_range.get(key, (0.0, 0.0)) for key in ["x", "y", "z"]]
++        pos_ranges = torch.tensor(pos_range_list, device=env.device)
++        random_pose = math_utils.sample_uniform(pos_ranges[:,0], pos_ranges[:,1], (env.num_envs,1), device=env.device)
+     else:
+-        raise NotImplementedError(
+-            f"Unknown distribution: '{distribution}' for joint properties randomization."
+-            " Please use 'uniform', 'log_uniform', 'gaussian'."
+-        )
+-    # perform the operation
+-    if operation == "add":
+-        data[dim_0_ids, dim_1_ids] += dist_fn(*distribution_parameters, (n_dim_0, n_dim_1), device=data.device)
+-    elif operation == "scale":
+-        data[dim_0_ids, dim_1_ids] *= dist_fn(*distribution_parameters, (n_dim_0, n_dim_1), device=data.device)
+-    elif operation == "abs":
+-        data[dim_0_ids, dim_1_ids] = dist_fn(*distribution_parameters, (n_dim_0, n_dim_1), device=data.device)
++        random_pose = None
++    if rot_noise_range is not None:
++        rot_range_list = [rot_noise_range.get(key, (0.0, 0.0)) for key in ["roll", "pitch", "yaw"]]
++        rot_ranges = torch.deg2rad(torch.tensor(rot_range_list)).to(env.device)
++        roll, pitch, yaw = math_utils.euler_xyz_from_quat(init_rot)
++        init_rot = torch.stack([roll, pitch, yaw], dim=-1).to(env.device)
++        init_rot += math_utils.sample_uniform(rot_ranges[:,0], rot_ranges[:,1], (env.num_envs,1), device=env.device)
++        random_rot = math_utils.quat_from_euler_xyz(init_rot[:,0],init_rot[:,1],init_rot[:,2])
+     else:
+-        raise NotImplementedError(
+-            f"Unknown operation: '{operation}' for property randomization. Please use 'add', 'scale', or 'abs'."
+-        )
+-    return data
+-
++        random_rot = init_rot 
++
++    camera_sensor.set_world_poses(
++        positions=random_pose,
++        orientations=random_rot,
++        convention=convention,
++        env_ids=torch.arange(env.num_envs, dtype=torch.int64, device=env.device),
++    )
++    
++class randomize_rigid_body_material(ManagerTermBase):
++    def __init__(self, cfg: EventTermCfg, env: ManagerBasedEnv):
++        """Initialize the term.
++
++        Args:
++            cfg: The configuration of the event term.
++            env: The environment instance.
++
++        Raises:
++            ValueError: If the asset is not a RigidObject or an Articulation.
++        """
++        super().__init__(cfg, env)
++
++        # extract the used quantities (to enable type-hinting)
++        self.asset_cfg: SceneEntityCfg = cfg.params["asset_cfg"]
++        self.asset: RigidObject | Articulation = env.scene[self.asset_cfg.name]
++
++        if not isinstance(self.asset, (RigidObject, Articulation)):
++            raise ValueError(
++                f"Randomization term 'randomize_rigid_body_material' not supported for asset: '{self.asset_cfg.name}'"
++                f" with type: '{type(self.asset)}'."
++            )
++        if isinstance(self.asset, Articulation) and self.asset_cfg.body_ids != slice(None):
++            self.num_shapes_per_body = []
++            for link_path in self.asset.root_physx_view.link_paths[0]:
++                link_physx_view = self.asset._physics_sim_view.create_rigid_body_view(link_path)  # type: ignore
++                self.num_shapes_per_body.append(link_physx_view.max_shapes)
++            num_shapes = sum(self.num_shapes_per_body)
++            expected_shapes = self.asset.root_physx_view.max_shapes
++            if num_shapes != expected_shapes:
++                raise ValueError(
++                    "Randomization term 'randomize_rigid_body_material' failed to parse the number of shapes per body."
++                    f" Expected total shapes: {expected_shapes}, but got: {num_shapes}."
++                )
++        else:
++            self.num_shapes_per_body = None
++
++        # obtain parameters for sampling friction and restitution values
++        friction_range = cfg.params.get("friction_range", (1.0, 1.0))
++        restitution_range = cfg.params.get("restitution_range", (0.,0.))
++        num_buckets = int(cfg.params.get("num_buckets", 1))
++        range_list = [friction_range, (0,0), restitution_range]
++        ranges = torch.tensor(range_list, device="cpu")
++        self.material_buckets = math_utils.sample_uniform(ranges[:, 0], ranges[:, 1], (num_buckets, 3), device="cpu")
++        self.material_buckets[:,1] = self.material_buckets[:,0]
++
++    def __call__(
++        self,
++        env: ManagerBasedEnv,
++        env_ids: torch.Tensor | None,
++        friction_range: tuple[float, float],
++        num_buckets: int,
++        asset_cfg: SceneEntityCfg,
++        make_consistent: bool = False,
++    ):
++        # resolve environment ids
++        if env_ids is None:
++            env_ids = torch.arange(env.scene.num_envs, device="cpu")
++        else:
++            env_ids = env_ids.cpu()
++
++        bucket_ids = torch.randint(0, num_buckets, (len(env_ids),), device="cpu")
++        material_samples = self.material_buckets[bucket_ids]
++        total_num_shapes = self.asset.root_physx_view.max_shapes
++        material_samples = material_samples.unsqueeze(1).repeat(1,total_num_shapes,1)
++        # retrieve material buffer from the physics simulation
++        materials = self.asset.root_physx_view.get_material_properties()
++        # update material buffer with new samples
++        if self.num_shapes_per_body is not None:
++            # sample material properties from the given ranges
++            for body_id in self.asset_cfg.body_ids:
++                # obtain indices of shapes for the body
++                start_idx = sum(self.num_shapes_per_body[:body_id])
++                end_idx = start_idx + self.num_shapes_per_body[body_id]
++                # assign the new materials
++                # material samples are of shape: num_env_ids x total_num_shapes 
++                materials[env_ids, start_idx:end_idx] = material_samples[:, start_idx:end_idx]
++        else:
++            # assign all the materials
++            materials[env_ids] = material_samples[:]
++
++        # apply to simulation
++        self.asset.root_physx_view.set_material_properties(materials, env_ids)
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/observations.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/observations.py
+index 8a862a9..1c9dcf7 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/observations.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/observations.py
+@@ -1,34 +1,229 @@
+-# Copyright (c) 2024-2025 Ziqi Fan
+-# SPDX-License-Identifier: Apache-2.0
++# Copyright (c) 2022-2025, The Isaac Lab Project Developers.
++# All rights reserved.
++#
++# SPDX-License-Identifier: BSD-3-Clause
+ 
+-from __future__ import annotations
++"""Common functions that can be used to define rewards for the learning environment.
+ 
++The functions can be passed to the :class:`isaaclab.managers.RewardTermCfg` object to
++specify the reward function and its parameters.
++"""
++from __future__ import annotations
++import torchvision
+ import torch
+ from typing import TYPE_CHECKING
+-
++from isaaclab.managers import ManagerTermBase, SceneEntityCfg
++from isaaclab.sensors import ContactSensor, RayCaster, RayCasterCamera
+ from isaaclab.assets import Articulation
+-from isaaclab.managers import SceneEntityCfg
+-
++from isaaclab.utils.math import euler_xyz_from_quat, wrap_to_pi
++from ..mdp.traverses import TraverseEvent 
++from collections.abc import Sequence
++import numpy as np 
++import cv2
+ if TYPE_CHECKING:
+-    from isaaclab.envs import ManagerBasedEnv, ManagerBasedRLEnv
+-
+-
+-def joint_pos_rel_without_wheel(
+-    env: ManagerBasedEnv,
+-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+-    wheel_asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+-) -> torch.Tensor:
+-    """The joint positions of the asset w.r.t. the default joint positions.(Without the wheel joints)"""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: Articulation = env.scene[asset_cfg.name]
+-    joint_pos_rel = asset.data.joint_pos[:, asset_cfg.joint_ids] - asset.data.default_joint_pos[:, asset_cfg.joint_ids]
+-    joint_pos_rel[:, wheel_asset_cfg.joint_ids] = 0
+-    return joint_pos_rel
+-
+-
+-def phase(env: ManagerBasedRLEnv, cycle_time: float) -> torch.Tensor:
+-    if not hasattr(env, "episode_length_buf") or env.episode_length_buf is None:
+-        env.episode_length_buf = torch.zeros(env.num_envs, device=env.device, dtype=torch.long)
+-    phase = env.episode_length_buf[:, None] * env.step_dt / cycle_time
+-    phase_tensor = torch.cat([torch.sin(2 * torch.pi * phase), torch.cos(2 * torch.pi * phase)], dim=-1)
+-    return phase_tensor
++    from ..envs import TraverseManagerBasedRLEnv
++    from isaaclab.managers import ObservationTermCfg
++
++
++class ExtremeTraverseObservations(ManagerTermBase):
++
++    def __init__(self, cfg: ObservationTermCfg, env: TraverseManagerBasedRLEnv):
++        super().__init__(cfg, env)
++        self.contact_sensor: ContactSensor = env.scene.sensors['contact_forces']
++        self.ray_sensor: RayCaster = env.scene.sensors['height_scanner']
++        self.traverse_event: TraverseEvent =  env.traverse_manager.get_term(cfg.params["traverse_name"])
++        self.asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
++        self.sensor_cfg = cfg.params["sensor_cfg"]
++        self.asset_cfg = cfg.params["asset_cfg"]
++        self.history_length = cfg.params['history_length']
++        self._obs_history_buffer = torch.zeros(self.num_envs, self.history_length, 3 + 2 + 3 + 4 + 36 + 5, device=self.device)
++        self.delta_yaw = torch.zeros(self.num_envs, device=self.device)
++        self.delta_next_yaw = torch.zeros(self.num_envs, device=self.device)
++        self.measured_heights = torch.zeros(self.num_envs, 132, device=self.device)
++        self.env = env
++        self.body_id = self.asset.find_bodies('base')[0]
++        
++    def reset(self, env_ids: Sequence[int] | None = None) -> None:
++        self._obs_history_buffer[env_ids, :, :] = 0. 
++
++    def __call__(
++        self,
++        env: TraverseManagerBasedRLEnv,        
++        asset_cfg: SceneEntityCfg,
++        sensor_cfg: SceneEntityCfg,
++        traverse_name: str,
++        history_length: int,
++        ) -> torch.Tensor:
++        
++        terrain_names = self.traverse_event.env_per_terrain_name
++        env_idx_tensor = torch.tensor((terrain_names != 'traverse_flat')).to(dtype = torch.bool, device=self.device)
++        invert_env_idx_tensor = torch.tensor((terrain_names == 'traverse_flat')).to(dtype = torch.bool, device=self.device)
++        roll, pitch, yaw = euler_xyz_from_quat(self.asset.data.root_quat_w)
++        imu_obs = torch.stack((wrap_to_pi(roll), wrap_to_pi(pitch)), dim=1).to(self.device)
++        if env.common_step_counter % 5 == 0:
++            self.delta_yaw = self.traverse_event.target_yaw - wrap_to_pi(yaw)
++            self.delta_next_yaw = self.traverse_event.next_target_yaw - wrap_to_pi(yaw)
++            self.measured_heights = self._get_heights()
++        commands = env.command_manager.get_command('base_velocity')
++        obs_buf = torch.cat((
++                            self.asset.data.root_ang_vel_b * 0.25,   #[1,3] 0~2
++                            imu_obs,    #[1,2] 3~4
++                            0*self.delta_yaw[:, None],   #[1,1] 5
++                            self.delta_yaw[:, None], #[1,1] 6
++                            self.delta_next_yaw[:, None], #[1,1] 7 
++                            0*commands[:, 0:2], #[1,2] 8 
++                            commands[:, 0:1],  #[1,1] 9
++                            env_idx_tensor,
++                            invert_env_idx_tensor,
++                            self.asset.data.joint_pos - self.asset.data.default_joint_pos,
++                            self.asset.data.joint_vel * 0.05 ,
++                            env.action_manager.get_term('joint_pos').action_history_buf[:, -1],
++                            self._get_contact_fill(),
++                            ),dim=-1)
++        priv_explicit = self._get_priv_explicit()
++        priv_latent = self._get_priv_latent()
++        observations = torch.cat([obs_buf, #53
++                                  self.measured_heights, #132
++                                  priv_explicit, # 9
++                                  priv_latent, # 29
++                                  self._obs_history_buffer.view(self.num_envs, -1)
++                                  ],dim=-1)
++        obs_buf[:, 6:8] = 0
++        self._obs_history_buffer = torch.where(
++            (env.episode_length_buf <= 1)[:, None, None], 
++            torch.stack([obs_buf] * self.history_length, dim=1),
++            torch.cat([
++                self._obs_history_buffer[:, 1:],
++                obs_buf.unsqueeze(1)
++            ], dim=1)
++        )
++        return observations 
++
++    def _get_contact_fill(
++        self,
++        ):
++        contact_forces = self.contact_sensor.data.net_forces_w_history[:, 0, self.sensor_cfg.body_ids] #(N, 4, 3)
++        contact = torch.norm(contact_forces, dim=-1) > 2.
++        previous_contact_forces = self.contact_sensor.data.net_forces_w_history[:, -1, self.sensor_cfg.body_ids] # N, 4, 3
++        last_contacts = torch.norm(previous_contact_forces, dim=-1) > 2.
++        contact_filt = torch.logical_or(contact, last_contacts) 
++        return (contact_filt.float()-0.5).to(self.device)
++    
++    def _get_priv_explicit(
++        self,
++        ):
++        base_lin_vel = self.asset.data.root_lin_vel_b 
++        return torch.cat((base_lin_vel * 2.0,
++                        0 * base_lin_vel,
++                        0 * base_lin_vel), dim=-1).to(self.device)
++    
++    def _get_priv_latent(
++        self,
++        ):
++        body_mass = self.asset.root_physx_view.get_masses()[:,self.body_id].to(self.device)
++        body_com = self.asset.data.com_pos_b[:,self.body_id,:].to(self.device).squeeze(1)
++        mass_params_tensor = torch.cat([body_mass, body_com],dim=-1).to(self.device)
++        friction_coeffs_tensor = self.asset.root_physx_view.get_material_properties()[:, 0, 0]
++        joint_stiffness = self.asset.data.joint_stiffness.to(self.device)
++        default_joint_stiffness = self.asset.data.default_joint_stiffness.to(self.device)
++        joint_damping = self.asset.data.joint_damping.to(self.device)
++        default_joint_damping = self.asset.data.default_joint_damping.to(self.device)
++        return torch.cat((
++            mass_params_tensor,
++            friction_coeffs_tensor.unsqueeze(1).to(self.device),
++            (joint_stiffness/ default_joint_stiffness) - 1, 
++            (joint_damping/ default_joint_damping) - 1
++        ), dim=-1).to(self.device)
++    
++    def _get_heights(self):
++        return torch.clip(self.ray_sensor.data.pos_w[:, 2].unsqueeze(1) - self.ray_sensor.data.ray_hits_w[..., 2] - 0.3, -1, 1).to(self.device)
++
++
++class image_features(ManagerTermBase):  
++    def __init__(self, cfg: ObservationTermCfg, env: TraverseManagerBasedRLEnv):
++        super().__init__(cfg, env)
++        self.camera_sensor: RayCasterCamera = env.scene[cfg.params["sensor_cfg"].name]
++        self.clipping_range = self.camera_sensor.cfg.max_distance
++        resized = cfg.params["resize"]
++        self.buffer_len = cfg.params['buffer_len']
++        self.debug_vis = cfg.params['debug_vis']
++        self.resize_transform = torchvision.transforms.Resize(
++                                    (resized[0], resized[1]), 
++                                    interpolation=torchvision.transforms.InterpolationMode.BICUBIC).to(env.device)
++        self.depth_buffer = torch.zeros(self.num_envs,  
++                                        self.buffer_len, 
++                                        resized[0], 
++                                        resized[1]).to(self.device)
++
++    def reset(self, env_ids: Sequence[int] | None = None) -> None:
++        if env_ids is None:
++            env_ids = torch.arange(0, self.num_envs)
++        depth_images = self.camera_sensor.data.output["distance_to_camera"].squeeze(-1)[env_ids]
++        for depth_image, env_id in zip(depth_images, env_ids):
++            processed_image = self._process_depth_image(depth_image)
++            self.depth_buffer[env_id] = torch.stack([processed_image]* 2, dim=0)
++
++    def __call__(
++        self,
++        env: TraverseManagerBasedRLEnv,        
++        sensor_cfg: SceneEntityCfg,
++        resize: tuple(int,int), 
++        buffer_len: int,
++        debug_vis:bool
++        ):
++        if env.common_step_counter % 5 == 0:
++            depth_images = self.camera_sensor.data.output["distance_to_camera"].squeeze(-1)
++            for env_id, depth_image in enumerate(depth_images):
++                processed_image = self._process_depth_image(depth_image)
++                self.depth_buffer[env_id] = torch.cat([self.depth_buffer[env_id, 1:], 
++                                                    processed_image.to(self.device).unsqueeze(0)], dim=0)
++        if self.debug_vis:
++            depth_images_np = self.depth_buffer[:, -2].detach().cpu().numpy()
++            depth_images_norm = []
++            for img in depth_images_np:
++                depth_images_norm.append(img)
++            rows = []
++            ncols = 4
++            for i in range(0, len(depth_images_norm), ncols):
++                row = np.hstack(depth_images_norm[i:i+ncols])  
++                rows.append(row)
++
++            grid_img = np.vstack(rows)   
++            # cv2.imshow("depth_images_grid", grid_img)
++            # cv2.waitKey(1)
++        return self.depth_buffer[:, -2].to(env.device)
++
++    def _process_depth_image(self, depth_image):
++        depth_image = self._crop_depth_image(depth_image)
++        depth_image = self.resize_transform(depth_image[None, :]).squeeze()
++        depth_image = self._normalize_depth_image(depth_image)
++        return depth_image
++
++    def _crop_depth_image(self, depth_image):
++        # crop 30 pixels from the left and right and and 20 pixels from bottom and return croped image
++        return depth_image[:-2, 4:-4]
++
++    def _normalize_depth_image(self, depth_image):
++        depth_image = depth_image  # make similiar to scandot 
++        depth_image = (depth_image) / (self.clipping_range)  - 0.5
++        return depth_image
++    
++class obervation_delta_yaw_ok(ManagerTermBase):
++
++    def __init__(self, cfg: ObservationTermCfg, env: TraverseManagerBasedRLEnv):
++        super().__init__(cfg, env)
++        self.delta_yaw = torch.zeros(self.num_envs, device=self.device)
++
++    def __call__(
++        self,
++        env: TraverseManagerBasedRLEnv,    
++        traverse_name: str,
++        threshold: float,
++        asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ):
++        if env.common_step_counter % 5 == 0:
++            traverse_event: TraverseEvent =  env.traverse_manager.get_term(traverse_name)
++            asset: Articulation = env.scene[asset_cfg.name]
++            _, _, yaw = euler_xyz_from_quat(asset.data.root_quat_w)
++            self.delta_yaw = traverse_event.target_yaw - wrap_to_pi(yaw)
++        return self.delta_yaw < threshold
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/rewards.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/rewards.py
+index dbffb78..8b021b2 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/rewards.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/rewards.py
+@@ -1,656 +1,221 @@
+-# Copyright (c) 2024-2025 Ziqi Fan
+-# SPDX-License-Identifier: Apache-2.0
+-
+ from __future__ import annotations
+ 
+ import torch
+ from typing import TYPE_CHECKING
+-
+-import isaaclab.utils.math as math_utils
+-from isaaclab.assets import Articulation, RigidObject
+-from isaaclab.envs import mdp
+-from isaaclab.managers import ManagerTermBase
+-from isaaclab.managers import RewardTermCfg as RewTerm
+-from isaaclab.managers import SceneEntityCfg
+-from isaaclab.sensors import ContactSensor, RayCaster
+-from isaaclab.utils.math import quat_apply_inverse, yaw_quat
++from isaaclab.managers import ManagerTermBase, SceneEntityCfg
++from isaaclab.sensors import ContactSensor
++from isaaclab.assets import Articulation
++from isaaclab.utils.math  import euler_xyz_from_quat, wrap_to_pi, quat_apply
++from ..mdp.traverses import TraverseEvent 
++from collections.abc import Sequence
+ 
+ if TYPE_CHECKING:
+-    from isaaclab.envs import ManagerBasedRLEnv
+-
+-
+-def track_lin_vel_xy_exp(
+-    env: ManagerBasedRLEnv, std: float, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+-) -> torch.Tensor:
+-    """Reward tracking of linear velocity commands (xy axes) using exponential kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    # compute the error
+-    lin_vel_error = torch.sum(
+-        torch.square(env.command_manager.get_command(command_name)[:, :2] - asset.data.root_lin_vel_b[:, :2]),
+-        dim=1,
+-    )
+-    reward = torch.exp(-lin_vel_error / std**2)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def track_ang_vel_z_exp(
+-    env: ManagerBasedRLEnv, std: float, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+-) -> torch.Tensor:
+-    """Reward tracking of angular velocity commands (yaw) using exponential kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    # compute the error
+-    ang_vel_error = torch.square(env.command_manager.get_command(command_name)[:, 2] - asset.data.root_ang_vel_b[:, 2])
+-    reward = torch.exp(-ang_vel_error / std**2)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def track_lin_vel_xy_yaw_frame_exp(
+-    env, std: float, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+-) -> torch.Tensor:
+-    """Reward tracking of linear velocity commands (xy axes) in the gravity aligned robot frame using exponential kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset = env.scene[asset_cfg.name]
+-    vel_yaw = quat_apply_inverse(yaw_quat(asset.data.root_quat_w), asset.data.root_lin_vel_w[:, :3])
+-    lin_vel_error = torch.sum(
+-        torch.square(env.command_manager.get_command(command_name)[:, :2] - vel_yaw[:, :2]), dim=1
+-    )
+-    reward = torch.exp(-lin_vel_error / std**2)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def track_ang_vel_z_world_exp(
+-    env, command_name: str, std: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+-) -> torch.Tensor:
+-    """Reward tracking of angular velocity commands (yaw) in world frame using exponential kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset = env.scene[asset_cfg.name]
+-    ang_vel_error = torch.square(env.command_manager.get_command(command_name)[:, 2] - asset.data.root_ang_vel_w[:, 2])
+-    reward = torch.exp(-ang_vel_error / std**2)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
++    from ..envs import TraverseManagerBasedRLEnv
++    from isaaclab.managers import RewardTermCfg
+ 
++import cv2
++import numpy as np 
+ 
+-def joint_power(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+-    """Reward joint_power"""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: Articulation = env.scene[asset_cfg.name]
+-    # compute the reward
+-    reward = torch.sum(
+-        torch.abs(asset.data.joint_vel[:, asset_cfg.joint_ids] * asset.data.applied_torque[:, asset_cfg.joint_ids]),
+-        dim=1,
+-    )
+-    return reward
+-
+-
+-def stand_still(
+-    env: ManagerBasedRLEnv,
+-    command_name: str,
+-    command_threshold: float = 0.06,
+-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+-) -> torch.Tensor:
+-    """Penalize offsets from the default joint positions when the command is very small."""
+-    # Penalize motion when command is nearly zero.
+-    reward = mdp.joint_deviation_l1(env, asset_cfg)
+-    reward *= torch.norm(env.command_manager.get_command(command_name)[:, :2], dim=1) < command_threshold
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def joint_pos_penalty(
+-    env: ManagerBasedRLEnv,
+-    command_name: str,
+-    asset_cfg: SceneEntityCfg,
+-    stand_still_scale: float,
+-    velocity_threshold: float,
+-    command_threshold: float,
+-) -> torch.Tensor:
+-    """Penalize joint position error from default on the articulation."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: Articulation = env.scene[asset_cfg.name]
+-    cmd = torch.linalg.norm(env.command_manager.get_command(command_name), dim=1)
+-    body_vel = torch.linalg.norm(asset.data.root_lin_vel_b[:, :2], dim=1)
+-    running_reward = torch.linalg.norm(
+-        (asset.data.joint_pos[:, asset_cfg.joint_ids] - asset.data.default_joint_pos[:, asset_cfg.joint_ids]), dim=1
+-    )
+-    reward = torch.where(
+-        torch.logical_or(cmd > command_threshold, body_vel > velocity_threshold),
+-        running_reward,
+-        stand_still_scale * running_reward,
+-    )
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-class GaitReward(ManagerTermBase):
+-    """Gait enforcing reward term for quadrupeds.
+-
+-    This reward penalizes contact timing differences between selected foot pairs defined in :attr:`synced_feet_pair_names`
+-    to bias the policy towards a desired gait, i.e trotting, bounding, or pacing. Note that this reward is only for
+-    quadrupedal gaits with two pairs of synchronized feet.
+-    """
+-
+-    def __init__(self, cfg: RewTerm, env: ManagerBasedRLEnv):
+-        """Initialize the term.
+-
+-        Args:
+-            cfg: The configuration of the reward.
+-            env: The RL environment instance.
+-        """
++class reward_feet_edge(ManagerTermBase):
++    def __init__(self, cfg: RewardTermCfg, env: TraverseManagerBasedRLEnv):
+         super().__init__(cfg, env)
+-        self.std: float = cfg.params["std"]
+-        self.command_name: str = cfg.params["command_name"]
+-        self.max_err: float = cfg.params["max_err"]
+-        self.velocity_threshold: float = cfg.params["velocity_threshold"]
+-        self.command_threshold: float = cfg.params["command_threshold"]
+         self.contact_sensor: ContactSensor = env.scene.sensors[cfg.params["sensor_cfg"].name]
+         self.asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
+-        # match foot body names with corresponding foot body ids
+-        synced_feet_pair_names = cfg.params["synced_feet_pair_names"]
+-        if (
+-            len(synced_feet_pair_names) != 2
+-            or len(synced_feet_pair_names[0]) != 2
+-            or len(synced_feet_pair_names[1]) != 2
+-        ):
+-            raise ValueError("This reward only supports gaits with two pairs of synchronized feet, like trotting.")
+-        synced_feet_pair_0 = self.contact_sensor.find_bodies(synced_feet_pair_names[0])[0]
+-        synced_feet_pair_1 = self.contact_sensor.find_bodies(synced_feet_pair_names[1])[0]
+-        self.synced_feet_pairs = [synced_feet_pair_0, synced_feet_pair_1]
++        self.sensor_cfg = cfg.params["sensor_cfg"]
++        self.asset_cfg = cfg.params["asset_cfg"]
++        self.traverse_event: TraverseEvent =  env.traverse_manager.get_term(cfg.params["traverse_name"])
++        self.body_id = self.contact_sensor.find_bodies('base')[0]
++        self.horizontal_scale = env.scene.terrain.cfg.terrain_generator.horizontal_scale
++        size_x, size_y = env.scene.terrain.cfg.terrain_generator.size
++        self.rows_offset = (size_x * env.scene.terrain.cfg.terrain_generator.num_rows/2)
++        self.cols_offset = (size_y * env.scene.terrain.cfg.terrain_generator.num_cols/2)
++        total_x_edge_maskes = torch.from_numpy(self.traverse_event.terrain.terrain_generator_class.x_edge_maskes).to(device = self.device)
++        self.x_edge_masks_tensor = total_x_edge_maskes.permute(0, 2, 1, 3).reshape(
++            env.scene.terrain.terrain_generator_class.total_width_pixels, env.scene.terrain.terrain_generator_class.total_length_pixels
++        )
+ 
+     def __call__(
+         self,
+-        env: ManagerBasedRLEnv,
+-        std: float,
+-        command_name: str,
+-        max_err: float,
+-        velocity_threshold: float,
+-        command_threshold: float,
+-        synced_feet_pair_names,
++        env: TraverseManagerBasedRLEnv,        
+         asset_cfg: SceneEntityCfg,
+         sensor_cfg: SceneEntityCfg,
+-    ) -> torch.Tensor:
+-        """Compute the reward.
+-
+-        This reward is defined as a multiplication between six terms where two of them enforce pair feet
+-        being in sync and the other four rewards if all the other remaining pairs are out of sync
+-
+-        Args:
+-            env: The RL environment instance.
+-        Returns:
+-            The reward value.
+-        """
+-        # for synchronous feet, the contact (air) times of two feet should match
+-        sync_reward_0 = self._sync_reward_func(self.synced_feet_pairs[0][0], self.synced_feet_pairs[0][1])
+-        sync_reward_1 = self._sync_reward_func(self.synced_feet_pairs[1][0], self.synced_feet_pairs[1][1])
+-        sync_reward = sync_reward_0 * sync_reward_1
+-        # for asynchronous feet, the contact time of one foot should match the air time of the other one
+-        async_reward_0 = self._async_reward_func(self.synced_feet_pairs[0][0], self.synced_feet_pairs[1][0])
+-        async_reward_1 = self._async_reward_func(self.synced_feet_pairs[0][1], self.synced_feet_pairs[1][1])
+-        async_reward_2 = self._async_reward_func(self.synced_feet_pairs[0][0], self.synced_feet_pairs[1][1])
+-        async_reward_3 = self._async_reward_func(self.synced_feet_pairs[1][0], self.synced_feet_pairs[0][1])
+-        async_reward = async_reward_0 * async_reward_1 * async_reward_2 * async_reward_3
+-        # only enforce gait if cmd > 0
+-        cmd = torch.linalg.norm(env.command_manager.get_command(self.command_name), dim=1)
+-        body_vel = torch.linalg.norm(self.asset.data.root_com_lin_vel_b[:, :2], dim=1)
+-        reward = torch.where(
+-            torch.logical_or(cmd > self.command_threshold, body_vel > self.velocity_threshold),
+-            sync_reward * async_reward,
+-            0.0,
+-        )
+-        reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-        return reward
+-
+-    """
+-    Helper functions.
+-    """
+-
+-    def _sync_reward_func(self, foot_0: int, foot_1: int) -> torch.Tensor:
+-        """Reward synchronization of two feet."""
+-        air_time = self.contact_sensor.data.current_air_time
+-        contact_time = self.contact_sensor.data.current_contact_time
+-        # penalize the difference between the most recent air time and contact time of synced feet pairs.
+-        se_air = torch.clip(torch.square(air_time[:, foot_0] - air_time[:, foot_1]), max=self.max_err**2)
+-        se_contact = torch.clip(torch.square(contact_time[:, foot_0] - contact_time[:, foot_1]), max=self.max_err**2)
+-        return torch.exp(-(se_air + se_contact) / self.std)
+-
+-    def _async_reward_func(self, foot_0: int, foot_1: int) -> torch.Tensor:
+-        """Reward anti-synchronization of two feet."""
+-        air_time = self.contact_sensor.data.current_air_time
+-        contact_time = self.contact_sensor.data.current_contact_time
+-        # penalize the difference between opposing contact modes air time of feet 1 to contact time of feet 2
+-        # and contact time of feet 1 to air time of feet 2) of feet pairs that are not in sync with each other.
+-        se_act_0 = torch.clip(torch.square(air_time[:, foot_0] - contact_time[:, foot_1]), max=self.max_err**2)
+-        se_act_1 = torch.clip(torch.square(contact_time[:, foot_0] - air_time[:, foot_1]), max=self.max_err**2)
+-        return torch.exp(-(se_act_0 + se_act_1) / self.std)
+-
+-
+-def joint_mirror(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg, mirror_joints: list[list[str]]) -> torch.Tensor:
+-    # extract the used quantities (to enable type-hinting)
++        traverse_name: str,
++        ) -> torch.Tensor:
++        feet_pos_x = ((self.asset.data.body_state_w[:, self.asset_cfg.body_ids ,0] + self.rows_offset)
++                      /self.horizontal_scale).round().long() 
++        feet_pos_y = ((self.asset.data.body_state_w[:, self.asset_cfg.body_ids ,1] + self.cols_offset)
++                      /self.horizontal_scale).round().long() 
++        feet_pos_x = torch.clip(feet_pos_x, 0, self.x_edge_masks_tensor.shape[0]-1)
++        feet_pos_y = torch.clip(feet_pos_y, 0, self.x_edge_masks_tensor.shape[1]-1)
++        feet_at_edge = self.x_edge_masks_tensor[feet_pos_x, feet_pos_y]
++        contact_forces = self.contact_sensor.data.net_forces_w_history[:, 0, self.sensor_cfg.body_ids] #(N, 4, 3)
++        previous_contact_forces = self.contact_sensor.data.net_forces_w_history[:, -1, self.sensor_cfg.body_ids] # N, 4, 3
++        contact = torch.norm(contact_forces, dim=-1) > 2.
++        last_contacts = torch.norm(previous_contact_forces, dim=-1) > 2.
++        contact_filt = torch.logical_or(contact, last_contacts) 
++        self.feet_at_edge = contact_filt & feet_at_edge
++        rew = (self.traverse_event.terrain.terrain_levels > 3) * torch.sum(self.feet_at_edge, dim=-1)
++        ## This is for debugging to matching index and x_edge_mask
++        # origin = self.x_edge_masks_tensor.detach().cpu().numpy().astype(np.uint8) * 255
++        # cv2.imshow('origin',origin)
++        # origin[feet_pos_x.detach().cpu().numpy(), feet_pos_y.detach().cpu().numpy()] -= 100
++        # cv2.imshow('feet_edge',origin)
++        # cv2.waitKey(1)
++        return rew
++
++def reward_torques(
++    env: TraverseManagerBasedRLEnv,        
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ) -> torch.Tensor: 
+     asset: Articulation = env.scene[asset_cfg.name]
+-    if not hasattr(env, "joint_mirror_joints_cache") or env.joint_mirror_joints_cache is None:
+-        # Cache joint positions for all pairs
+-        env.joint_mirror_joints_cache = [
+-            [asset.find_joints(joint_name) for joint_name in joint_pair] for joint_pair in mirror_joints
+-        ]
+-    reward = torch.zeros(env.num_envs, device=env.device)
+-    # Iterate over all joint pairs
+-    for joint_pair in env.joint_mirror_joints_cache:
+-        # Calculate the difference for each pair and add to the total reward
+-        diff = torch.sum(
+-            torch.square(asset.data.joint_pos[:, joint_pair[0][0]] - asset.data.joint_pos[:, joint_pair[1][0]]),
+-            dim=-1,
+-        )
+-        reward += diff
+-    reward *= 1 / len(mirror_joints) if len(mirror_joints) > 0 else 0
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
++    return torch.sum(torch.square(asset.data.applied_torque), dim=1)
+ 
+-
+-def action_mirror(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg, mirror_joints: list[list[str]]) -> torch.Tensor:
+-    # extract the used quantities (to enable type-hinting)
++def reward_dof_error(    
++    env: TraverseManagerBasedRLEnv,        
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ) -> torch.Tensor: 
+     asset: Articulation = env.scene[asset_cfg.name]
+-    if not hasattr(env, "action_mirror_joints_cache") or env.action_mirror_joints_cache is None:
+-        # Cache joint positions for all pairs
+-        env.action_mirror_joints_cache = [
+-            [asset.find_joints(joint_name) for joint_name in joint_pair] for joint_pair in mirror_joints
+-        ]
+-    reward = torch.zeros(env.num_envs, device=env.device)
+-    # Iterate over all joint pairs
+-    for joint_pair in env.action_mirror_joints_cache:
+-        # Calculate the difference for each pair and add to the total reward
+-        diff = torch.sum(
+-            torch.square(
+-                torch.abs(env.action_manager.action[:, joint_pair[0][0]])
+-                - torch.abs(env.action_manager.action[:, joint_pair[1][0]])
+-            ),
+-            dim=-1,
+-        )
+-        reward += diff
+-    reward *= 1 / len(mirror_joints) if len(mirror_joints) > 0 else 0
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
++    return torch.sum(torch.square(asset.data.joint_pos - asset.data.default_joint_pos), dim=1)
+ 
+-def action_sync(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg, joint_groups: list[list[str]]) -> torch.Tensor:
+-    # extract the used quantities (to enable type-hinting)
++def reward_hip_pos(
++    env: TraverseManagerBasedRLEnv,        
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ) -> torch.Tensor: 
+     asset: Articulation = env.scene[asset_cfg.name]
++    return torch.sum(torch.square(asset.data.joint_pos[:, asset_cfg.joint_ids] \
++                                    - asset.data.default_joint_pos[:, asset_cfg.joint_ids]), dim=1)
+ 
+-    # Cache joint indices if not already done
+-    if not hasattr(env, "action_sync_joint_cache") or env.action_sync_joint_cache is None:
+-        env.action_sync_joint_cache = [
+-            [asset.find_joints(joint_name) for joint_name in joint_group] for joint_group in joint_groups
+-        ]
+-
+-    reward = torch.zeros(env.num_envs, device=env.device)
+-    # Iterate over each joint group
+-    for joint_group in env.action_sync_joint_cache:
+-        if len(joint_group) < 2:
+-            continue  # need at least 2 joints to compare
+-
+-        # Get absolute actions for all joints in this group
+-        actions = torch.stack(
+-            [torch.abs(env.action_manager.action[:, joint[0]]) for joint in joint_group], dim=1
+-        )  # shape: (num_envs, num_joints_in_group)
+-
+-        # Calculate mean action for each environment
+-        mean_actions = torch.mean(actions, dim=1, keepdim=True)
+-
+-        # Calculate variance from mean for each joint
+-        variance = torch.mean(torch.square(actions - mean_actions), dim=1)
+-
+-        # Add to reward (we want to minimize this variance)
+-        reward += variance.squeeze()
+-    reward *= 1 / len(joint_groups) if len(joint_groups) > 0 else 0
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_air_time(
+-    env: ManagerBasedRLEnv, command_name: str, sensor_cfg: SceneEntityCfg, threshold: float
+-) -> torch.Tensor:
+-    """Reward long steps taken by the feet using L2-kernel.
+-
+-    This function rewards the agent for taking steps that are longer than a threshold. This helps ensure
+-    that the robot lifts its feet off the ground and takes steps. The reward is computed as the sum of
+-    the time for which the feet are in the air.
+-
+-    If the commands are small (i.e. the agent is not supposed to take a step), then the reward is zero.
+-    """
+-    # extract the used quantities (to enable type-hinting)
+-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    # compute the reward
+-    first_contact = contact_sensor.compute_first_contact(env.step_dt)[:, sensor_cfg.body_ids]
+-    last_air_time = contact_sensor.data.last_air_time[:, sensor_cfg.body_ids]
+-    reward = torch.sum((last_air_time - threshold) * first_contact, dim=1)
+-    # no reward for zero command
+-    reward *= torch.norm(env.command_manager.get_command(command_name)[:, :2], dim=1) > 0.1
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_air_time_positive_biped(env, command_name: str, threshold: float, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+-    """Reward long steps taken by the feet for bipeds.
+-
+-    This function rewards the agent for taking steps up to a specified threshold and also keep one foot at
+-    a time in the air.
+-
+-    If the commands are small (i.e. the agent is not supposed to take a step), then the reward is zero.
+-    """
+-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    # compute the reward
+-    air_time = contact_sensor.data.current_air_time[:, sensor_cfg.body_ids]
+-    contact_time = contact_sensor.data.current_contact_time[:, sensor_cfg.body_ids]
+-    in_contact = contact_time > 0.0
+-    in_mode_time = torch.where(in_contact, contact_time, air_time)
+-    single_stance = torch.sum(in_contact.int(), dim=1) == 1
+-    reward = torch.min(torch.where(single_stance.unsqueeze(-1), in_mode_time, 0.0), dim=1)[0]
+-    reward = torch.clamp(reward, max=threshold)
+-    # no reward for zero command
+-    reward *= torch.norm(env.command_manager.get_command(command_name)[:, :2], dim=1) > 0.1
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_air_time_variance_penalty(env: ManagerBasedRLEnv, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+-    """Penalize variance in the amount of time each foot spends in the air/on the ground relative to each other"""
+-    # extract the used quantities (to enable type-hinting)
+-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    # compute the reward
+-    last_air_time = contact_sensor.data.last_air_time[:, sensor_cfg.body_ids]
+-    last_contact_time = contact_sensor.data.last_contact_time[:, sensor_cfg.body_ids]
+-    reward = torch.var(torch.clip(last_air_time, max=0.5), dim=1) + torch.var(
+-        torch.clip(last_contact_time, max=0.5), dim=1
+-    )
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_contact(
+-    env: ManagerBasedRLEnv, command_name: str, expect_contact_num: int, sensor_cfg: SceneEntityCfg
+-) -> torch.Tensor:
+-    """Reward feet contact"""
+-    # extract the used quantities (to enable type-hinting)
+-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    # compute the reward
+-    contact = contact_sensor.compute_first_contact(env.step_dt)[:, sensor_cfg.body_ids]
+-    contact_num = torch.sum(contact, dim=1)
+-    reward = (contact_num != expect_contact_num).float()
+-    # no reward for zero command
+-    reward *= torch.linalg.norm(env.command_manager.get_command(command_name), dim=1) > 0.1
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_contact_without_cmd(env: ManagerBasedRLEnv, command_name: str, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+-    """Reward feet contact"""
+-    # extract the used quantities (to enable type-hinting)
+-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    # compute the reward
+-    contact = contact_sensor.compute_first_contact(env.step_dt)[:, sensor_cfg.body_ids]
+-    reward = torch.sum(contact, dim=-1).float()
+-    reward *= torch.linalg.norm(env.command_manager.get_command(command_name), dim=1) < 0.1
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_stumble(env: ManagerBasedRLEnv, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+-    # extract the used quantities (to enable type-hinting)
+-    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    forces_z = torch.abs(contact_sensor.data.net_forces_w[:, sensor_cfg.body_ids, 2])
+-    forces_xy = torch.linalg.norm(contact_sensor.data.net_forces_w[:, sensor_cfg.body_ids, :2], dim=2)
+-    # Penalize feet hitting vertical surfaces
+-    reward = torch.any(forces_xy > 4 * forces_z, dim=1).float()
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_distance_y_exp(
+-    env: ManagerBasedRLEnv, stance_width: float, std: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+-) -> torch.Tensor:
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    cur_footsteps_translated = asset.data.body_link_pos_w[:, asset_cfg.body_ids, :] - asset.data.root_link_pos_w[
+-        :, :
+-    ].unsqueeze(1)
+-    n_feet = len(asset_cfg.body_ids)
+-    footsteps_in_body_frame = torch.zeros(env.num_envs, n_feet, 3, device=env.device)
+-    for i in range(n_feet):
+-        footsteps_in_body_frame[:, i, :] = math_utils.quat_apply(
+-            math_utils.quat_conjugate(asset.data.root_link_quat_w), cur_footsteps_translated[:, i, :]
+-        )
+-    side_sign = torch.tensor(
+-        [1.0 if i % 2 == 0 else -1.0 for i in range(n_feet)],
+-        device=env.device,
+-    )
+-    stance_width_tensor = stance_width * torch.ones([env.num_envs, 1], device=env.device)
+-    desired_ys = stance_width_tensor / 2 * side_sign.unsqueeze(0)
+-    stance_diff = torch.square(desired_ys - footsteps_in_body_frame[:, :, 1])
+-    reward = torch.exp(-torch.sum(stance_diff, dim=1) / (std**2))
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_distance_xy_exp(
+-    env: ManagerBasedRLEnv,
+-    stance_width: float,
+-    stance_length: float,
+-    std: float,
++def reward_ang_vel_xy(
++    env: TraverseManagerBasedRLEnv,        
+     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+-) -> torch.Tensor:
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-
+-    # Compute the current footstep positions relative to the root
+-    cur_footsteps_translated = asset.data.body_link_pos_w[:, asset_cfg.body_ids, :] - asset.data.root_link_pos_w[
+-        :, :
+-    ].unsqueeze(1)
+-
+-    footsteps_in_body_frame = torch.zeros(env.num_envs, 4, 3, device=env.device)
+-    for i in range(4):
+-        footsteps_in_body_frame[:, i, :] = math_utils.quat_apply(
+-            math_utils.quat_conjugate(asset.data.root_link_quat_w), cur_footsteps_translated[:, i, :]
+-        )
+-
+-    # Desired x and y positions for each foot
+-    stance_width_tensor = stance_width * torch.ones([env.num_envs, 1], device=env.device)
+-    stance_length_tensor = stance_length * torch.ones([env.num_envs, 1], device=env.device)
+-
+-    desired_xs = torch.cat(
+-        [stance_length_tensor / 2, stance_length_tensor / 2, -stance_length_tensor / 2, -stance_length_tensor / 2],
+-        dim=1,
+-    )
+-    desired_ys = torch.cat(
+-        [stance_width_tensor / 2, -stance_width_tensor / 2, stance_width_tensor / 2, -stance_width_tensor / 2], dim=1
+-    )
+-
+-    # Compute differences in x and y
+-    stance_diff_x = torch.square(desired_xs - footsteps_in_body_frame[:, :, 0])
+-    stance_diff_y = torch.square(desired_ys - footsteps_in_body_frame[:, :, 1])
+-
+-    # Combine x and y differences and compute the exponential penalty
+-    stance_diff = stance_diff_x + stance_diff_y
+-    reward = torch.exp(-torch.sum(stance_diff, dim=1) / std**2)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def feet_height(
+-    env: ManagerBasedRLEnv,
+-    command_name: str,
+-    asset_cfg: SceneEntityCfg,
+-    target_height: float,
+-    tanh_mult: float,
+-) -> torch.Tensor:
+-    """Reward the swinging feet for clearing a specified height off the ground"""
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    foot_z_target_error = torch.square(asset.data.body_pos_w[:, asset_cfg.body_ids, 2] - target_height)
+-    foot_velocity_tanh = torch.tanh(
+-        tanh_mult * torch.linalg.norm(asset.data.body_lin_vel_w[:, asset_cfg.body_ids, :2], dim=2)
+-    )
+-    reward = torch.sum(foot_z_target_error * foot_velocity_tanh, dim=1)
+-    # no reward for zero command
+-    reward *= torch.linalg.norm(env.command_manager.get_command(command_name), dim=1) > 0.1
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
++    ) -> torch.Tensor: 
++    asset: Articulation = env.scene[asset_cfg.name]
++    return torch.sum(torch.square(asset.data.root_ang_vel_b[:,:2]), dim=1)
+ 
++class reward_action_rate(ManagerTermBase):
++    def __init__(self, cfg: RewardTermCfg, env: TraverseManagerBasedRLEnv):
++        super().__init__(cfg, env)
++        asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
++        self.previous_actions = torch.zeros(env.num_envs, 2,  asset.num_joints, dtype= torch.float ,device=self.device)
++        
++    def reset(self, env_ids: Sequence[int] | None = None) -> None:
++        self.previous_actions[env_ids, 0,:] = 0.
++        self.previous_actions[env_ids, 1,:] = 0.
+ 
+-def feet_height_body(
+-    env: ManagerBasedRLEnv,
+-    command_name: str,
+-    asset_cfg: SceneEntityCfg,
+-    target_height: float,
+-    tanh_mult: float,
+-) -> torch.Tensor:
+-    """Reward the swinging feet for clearing a specified height off the ground"""
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    cur_footpos_translated = asset.data.body_pos_w[:, asset_cfg.body_ids, :] - asset.data.root_pos_w[:, :].unsqueeze(1)
+-    footpos_in_body_frame = torch.zeros(env.num_envs, len(asset_cfg.body_ids), 3, device=env.device)
+-    cur_footvel_translated = asset.data.body_lin_vel_w[:, asset_cfg.body_ids, :] - asset.data.root_lin_vel_w[
+-        :, :
+-    ].unsqueeze(1)
+-    footvel_in_body_frame = torch.zeros(env.num_envs, len(asset_cfg.body_ids), 3, device=env.device)
+-    for i in range(len(asset_cfg.body_ids)):
+-        footpos_in_body_frame[:, i, :] = math_utils.quat_apply_inverse(
+-            asset.data.root_quat_w, cur_footpos_translated[:, i, :]
+-        )
+-        footvel_in_body_frame[:, i, :] = math_utils.quat_apply_inverse(
+-            asset.data.root_quat_w, cur_footvel_translated[:, i, :]
+-        )
+-    foot_z_target_error = torch.square(footpos_in_body_frame[:, :, 2] - target_height).view(env.num_envs, -1)
+-    foot_velocity_tanh = torch.tanh(tanh_mult * torch.norm(footvel_in_body_frame[:, :, :2], dim=2))
+-    reward = torch.sum(foot_z_target_error * foot_velocity_tanh, dim=1)
+-    reward *= torch.linalg.norm(env.command_manager.get_command(command_name), dim=1) > 0.1
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
++    def __call__(
++        self,
++        env: TraverseManagerBasedRLEnv,        
++        asset_cfg: SceneEntityCfg,
++        ) -> torch.Tensor:
++        self.previous_actions[:, 0, :] = self.previous_actions[:, 1, :]
++        self.previous_actions[:, 1, :] = env.action_manager.get_term('joint_pos').raw_actions
++        return torch.norm(self.previous_actions[:, 1, :] - self.previous_actions[:,0,:], dim=1)
++    
++class reward_dof_acc(ManagerTermBase):
++    def __init__(self, cfg: RewardTermCfg, env: TraverseManagerBasedRLEnv):
++        super().__init__(cfg, env)
++        asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
++        self.previous_joint_vel = torch.zeros(env.num_envs, 2,  asset.num_joints, dtype= torch.float ,device=self.device)
++        self.dt = env.cfg.decimation * env.cfg.sim.dt
+ 
++    def reset(self, env_ids: Sequence[int] | None = None) -> None:
++        self.previous_joint_vel[env_ids, 0,:] = 0.
++        self.previous_joint_vel[env_ids, 1,:] = 0.
+ 
+-def feet_slide(
+-    env: ManagerBasedRLEnv, sensor_cfg: SceneEntityCfg, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+-) -> torch.Tensor:
+-    """Penalize feet sliding.
++    def __call__(
++        self,
++        env: TraverseManagerBasedRLEnv,        
++        asset_cfg: SceneEntityCfg,
++        ) -> torch.Tensor:
++        asset: Articulation = env.scene[asset_cfg.name]
++        self.previous_joint_vel[:, 0, :] = self.previous_joint_vel[:, 1, :]
++        self.previous_joint_vel[:, 1, :] = asset.data.joint_vel
++        return torch.sum(torch.square((self.previous_joint_vel[:, 1, :] - self.previous_joint_vel[:,0,:]) / self.dt), dim=1)
++        
++def reward_lin_vel_z(
++    env: TraverseManagerBasedRLEnv,        
++    traverse_name:str, 
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ) -> torch.Tensor: 
++    traverse_event: TraverseEvent =  env.traverse_manager.get_term(traverse_name)
++    terrain_names = traverse_event.env_per_terrain_name
++    asset: Articulation = env.scene[asset_cfg.name]
++    rew = torch.square(asset.data.root_lin_vel_b[:, 2])
++    rew[(terrain_names !='traverse_flat')[:,-1]] *= 0.5
++    return rew
+ 
+-    This function penalizes the agent for sliding its feet on the ground. The reward is computed as the
+-    norm of the linear velocity of the feet multiplied by a binary contact sensor. This ensures that the
+-    agent is penalized only when the feet are in contact with the ground.
+-    """
+-    # Penalize feet sliding
++def reward_orientation(
++    env: TraverseManagerBasedRLEnv,   
++    traverse_name:str, 
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ) -> torch.Tensor: 
++    traverse_event: TraverseEvent =  env.traverse_manager.get_term(traverse_name)
++    terrain_names = traverse_event.env_per_terrain_name
++    asset: Articulation = env.scene[asset_cfg.name]
++    rew = torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
++    rew[(terrain_names !='traverse_flat')[:,-1]] = 0.
++    return rew
++
++def reward_feet_stumble(
++    env: TraverseManagerBasedRLEnv,        
++    sensor_cfg: SceneEntityCfg ,
++    ) -> torch.Tensor: 
+     contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    contacts = contact_sensor.data.net_forces_w_history[:, :, sensor_cfg.body_ids, :].norm(dim=-1).max(dim=1)[0] > 1.0
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-
+-    # feet_vel = asset.data.body_lin_vel_w[:, asset_cfg.body_ids, :2]
+-    # reward = torch.sum(feet_vel.norm(dim=-1) * contacts, dim=1)
+-
+-    cur_footvel_translated = asset.data.body_lin_vel_w[:, asset_cfg.body_ids, :] - asset.data.root_lin_vel_w[
+-        :, :
+-    ].unsqueeze(1)
+-    footvel_in_body_frame = torch.zeros(env.num_envs, len(asset_cfg.body_ids), 3, device=env.device)
+-    for i in range(len(asset_cfg.body_ids)):
+-        footvel_in_body_frame[:, i, :] = math_utils.quat_apply_inverse(
+-            asset.data.root_quat_w, cur_footvel_translated[:, i, :]
+-        )
+-    foot_leteral_vel = torch.sqrt(torch.sum(torch.square(footvel_in_body_frame[:, :, :2]), dim=2)).view(
+-        env.num_envs, -1
+-    )
+-    reward = torch.sum(foot_leteral_vel * contacts, dim=1)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-# def smoothness_1(env: ManagerBasedRLEnv) -> torch.Tensor:
+-#     # Penalize changes in actions
+-#     diff = torch.square(env.action_manager.action - env.action_manager.prev_action)
+-#     diff = diff * (env.action_manager.prev_action[:, :] != 0)  # ignore first step
+-#     return torch.sum(diff, dim=1)
+-
+-
+-# def smoothness_2(env: ManagerBasedRLEnv) -> torch.Tensor:
+-#     # Penalize changes in actions
+-#     diff = torch.square(env.action_manager.action - 2 * env.action_manager.prev_action + env.action_manager.prev_prev_action)
+-#     diff = diff * (env.action_manager.prev_action[:, :] != 0)  # ignore first step
+-#     diff = diff * (env.action_manager.prev_prev_action[:, :] != 0)  # ignore second step
+-#     return torch.sum(diff, dim=1)
+-
+-
+-def upward(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+-    """Penalize z-axis base linear velocity using L2 squared kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    reward = torch.square(1 - asset.data.projected_gravity_b[:, 2])
+-    return reward
+-
+-
+-def base_height_l2(
+-    env: ManagerBasedRLEnv,
+-    target_height: float,
++    net_contact_forces = contact_sensor.data.net_forces_w_history[:,0,sensor_cfg.body_ids]
++    rew = torch.any(torch.norm(net_contact_forces[:, :, :2], dim=2) >\
++            4 *torch.abs(net_contact_forces[:, :, 2]), dim=1)
++    return rew.float()
++
++def reward_tracking_goal_vel(
++    env: TraverseManagerBasedRLEnv, 
++    traverse_name : str, 
+     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+-    sensor_cfg: SceneEntityCfg | None = None,
+-) -> torch.Tensor:
+-    """Penalize asset height from its target using L2 squared kernel.
+-
+-    Note:
+-        For flat terrain, target height is in the world frame. For rough terrain,
+-        sensor readings can adjust the target height to account for the terrain.
+-    """
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    if sensor_cfg is not None:
+-        sensor: RayCaster = env.scene[sensor_cfg.name]
+-        # Adjust the target height using the sensor data
+-        ray_hits = sensor.data.ray_hits_w[..., 2]
+-        if torch.isnan(ray_hits).any() or torch.isinf(ray_hits).any() or torch.max(torch.abs(ray_hits)) > 1e6:
+-            adjusted_target_height = asset.data.root_link_pos_w[:, 2]
+-        else:
+-            adjusted_target_height = target_height + torch.mean(ray_hits, dim=1)
+-    else:
+-        # Use the provided target height directly for flat terrain
+-        adjusted_target_height = target_height
+-    # Compute the L2 squared penalty
+-    reward = torch.square(asset.data.root_pos_w[:, 2] - adjusted_target_height)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def lin_vel_z_l2(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+-    """Penalize z-axis base linear velocity using L2 squared kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    reward = torch.square(asset.data.root_lin_vel_b[:, 2])
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
++    ) -> torch.Tensor:
++    asset: Articulation = env.scene[asset_cfg.name]
++    traverse_event: TraverseEvent = env.traverse_manager.get_term(traverse_name)
++    target_pos_rel = traverse_event.target_pos_rel
++    target_vel = target_pos_rel / (torch.norm(target_pos_rel, dim=-1, keepdim=True) + 1e-5)
++    cur_vel = asset.data.root_vel_w[:, :2]
++    proj_vel = torch.sum(target_vel * cur_vel, dim=-1)
++    command_vel = env.command_manager.get_command('base_velocity')[:, 0]
++    rew_move = torch.minimum(proj_vel, command_vel) / (command_vel + 1e-5)
++    return rew_move
++
++def reward_tracking_yaw(     
++    env: TraverseManagerBasedRLEnv, 
++    traverse_name : str, 
++    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
++    ) -> torch.Tensor:
++    traverse_event: TraverseEvent =  env.traverse_manager.get_term(traverse_name)
++    asset: Articulation = env.scene[asset_cfg.name]
++    q = asset.data.root_quat_w
++    yaw = torch.atan2(2*(q[:,0]*q[:,3] + q[:,1]*q[:,2]),
++                    1 - 2*(q[:,2]**2 + q[:,3]**2))
++    return torch.exp(-torch.abs((traverse_event.target_yaw - yaw)))
+ 
+-def ang_vel_xy_l2(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+-    """Penalize xy-axis base angular velocity using L2 squared kernel."""
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    reward = torch.sum(torch.square(asset.data.root_ang_vel_b[:, :2]), dim=1)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
++class reward_delta_torques(ManagerTermBase):
++    def __init__(self, cfg: RewardTermCfg, env: TraverseManagerBasedRLEnv):
++        super().__init__(cfg, env)
++        self.asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
++        self.previous_torque = torch.zeros(env.num_envs, 2,  self.asset.num_joints, dtype= torch.float ,device=self.device)
+ 
++    def reset(self, env_ids: Sequence[int] | None = None) -> None:
++        self.previous_torque[env_ids, 0,:] = 0.
++        self.previous_torque[env_ids, 1,:] = 0.
+ 
+-def undesired_contacts(env: ManagerBasedRLEnv, threshold: float, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+-    """Penalize undesired contacts as the number of violations that are above a threshold."""
+-    # extract the used quantities (to enable type-hinting)
++    def __call__(
++        self,
++        env: TraverseManagerBasedRLEnv,        
++        asset_cfg: SceneEntityCfg,
++        ) -> torch.Tensor:
++        self.previous_torque[:, 0, :] = self.previous_torque[:, 1, :]
++        self.previous_torque[:, 1, :] = self.asset.data.applied_torque
++        return torch.sum(torch.square((self.previous_torque[:, 1, :] - self.previous_torque[:,0,:])), dim=1)
++
++def reward_collision(
++    env: TraverseManagerBasedRLEnv, 
++    sensor_cfg: SceneEntityCfg ,
++) -> torch.Tensor:
+     contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+-    # check if contact force is above threshold
+-    net_contact_forces = contact_sensor.data.net_forces_w_history
+-    is_contact = torch.max(torch.norm(net_contact_forces[:, :, sensor_cfg.body_ids], dim=-1), dim=1)[0] > threshold
+-    # sum over contacts for each environment
+-    reward = torch.sum(is_contact, dim=1).float()
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
+-
+-
+-def flat_orientation_l2(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+-    """Penalize non-flat base orientation using L2 squared kernel.
+-
+-    This is computed by penalizing the xy-components of the projected gravity vector.
+-    """
+-    # extract the used quantities (to enable type-hinting)
+-    asset: RigidObject = env.scene[asset_cfg.name]
+-    reward = torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
+-    reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
+-    return reward
++    net_contact_forces = contact_sensor.data.net_forces_w_history[:,0,sensor_cfg.body_ids]
++    return torch.sum(1.*(torch.norm(net_contact_forces, dim=-1) > 0.1), dim=1)
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__init__.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__init__.py
+deleted file mode 100644
+index d974cc5..0000000
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__init__.py
++++ /dev/null
+@@ -1,13 +0,0 @@
+-# Copyright (c) 2024-2025 Ziqi Fan
+-# SPDX-License-Identifier: Apache-2.0
+-
+-# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+-# All rights reserved.
+-#
+-# SPDX-License-Identifier: BSD-3-Clause
+-
+-"""Symmetry functions for the velocity tasks.
+-
+-These functions are used to augment the observations and actions of the environment.
+-They are specific to the velocity task and the choice of the robot.
+-"""
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__pycache__/__init__.cpython-311.pyc b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__pycache__/__init__.cpython-311.pyc
+deleted file mode 100644
+index 9f48168..0000000
+Binary files a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/__pycache__/__init__.cpython-311.pyc and /dev/null differ
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/anymal.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/anymal.py
+deleted file mode 100644
+index f7c01f1..0000000
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/mdp/symmetry/anymal.py
++++ /dev/null
+@@ -1,248 +0,0 @@
+-# Copyright (c) 2024-2025 Ziqi Fan
+-# SPDX-License-Identifier: Apache-2.0
+-
+-# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+-# All rights reserved.
+-#
+-# SPDX-License-Identifier: BSD-3-Clause
+-
+-
+-"""Functions to specify the symmetry in the observation and action space for ANYmal."""
+-
+-from __future__ import annotations
+-
+-import torch
+-from typing import TYPE_CHECKING
+-
+-if TYPE_CHECKING:
+-    from omni.isaac.lab.envs import ManagerBasedRLEnv
+-
+-# specify the functions that are available for import
+-__all__ = ["compute_symmetric_states"]
+-
+-
+-@torch.no_grad()
+-def compute_symmetric_states(
+-    env: ManagerBasedRLEnv,
+-    obs: torch.Tensor | None = None,
+-    actions: torch.Tensor | None = None,
+-    obs_type: str = "policy",
+-):
+-    """Augments the given observations and actions by applying symmetry transformations.
+-
+-    This function creates augmented versions of the provided observations and actions by applying
+-    four symmetrical transformations: original, left-right, front-back, and diagonal. The symmetry
+-    transformations are beneficial for reinforcement learning tasks by providing additional
+-    diverse data without requiring additional data collection.
+-
+-    Args:
+-        env: The environment instance.
+-        obs: The original observation tensor. Defaults to None.
+-        actions: The original actions tensor. Defaults to None.
+-        obs_type: The type of observation to augment. Defaults to "policy".
+-
+-    Returns:
+-        Augmented observations and actions tensors, or None if the respective input was None.
+-    """
+-
+-    # observations
+-    if obs is not None:
+-        num_envs = obs.shape[0]
+-        # since we have 4 different symmetries, we need to augment the batch size by 4
+-        obs_aug = torch.zeros(num_envs * 4, obs.shape[1], device=obs.device)
+-        # -- original
+-        obs_aug[:num_envs] = obs[:]
+-        # -- left-right
+-        obs_aug[num_envs : 2 * num_envs] = _transform_obs_left_right(env.unwrapped, obs, obs_type)
+-        # -- front-back
+-        obs_aug[2 * num_envs : 3 * num_envs] = _transform_obs_front_back(env.unwrapped, obs, obs_type)
+-        # -- diagonal
+-        obs_aug[3 * num_envs :] = _transform_obs_front_back(env.unwrapped, obs_aug[num_envs : 2 * num_envs])
+-    else:
+-        obs_aug = None
+-
+-    # actions
+-    if actions is not None:
+-        num_envs = actions.shape[0]
+-        # since we have 4 different symmetries, we need to augment the batch size by 4
+-        actions_aug = torch.zeros(num_envs * 4, actions.shape[1], device=actions.device)
+-        # -- original
+-        actions_aug[:num_envs] = actions[:]
+-        # -- left-right
+-        actions_aug[num_envs : 2 * num_envs] = _transform_actions_left_right(actions)
+-        # -- front-back
+-        actions_aug[2 * num_envs : 3 * num_envs] = _transform_actions_front_back(actions)
+-        # -- diagonal
+-        actions_aug[3 * num_envs :] = _transform_actions_front_back(actions_aug[num_envs : 2 * num_envs])
+-    else:
+-        actions_aug = None
+-
+-    return obs_aug, actions_aug
+-
+-
+-"""
+-Symmetry functions for observations.
+-"""
+-
+-
+-def _transform_obs_left_right(env: ManagerBasedRLEnv, obs: torch.Tensor, obs_type: str = "policy") -> torch.Tensor:
+-    """Apply a left-right symmetry transformation to the observation tensor.
+-
+-    This function modifies the given observation tensor by applying transformations
+-    that represent a symmetry with respect to the left-right axis. This includes
+-    negating certain components of the linear and angular velocities, projected gravity,
+-    velocity commands, and flipping the joint positions, joint velocities, and last actions
+-    for the ANYmal robot. Additionally, if height-scan data is present, it is flipped
+-    along the relevant dimension.
+-
+-    Args:
+-        env: The environment instance from which the observation is obtained.
+-        obs: The observation tensor to be transformed.
+-        obs_type: The type of observation to augment. Defaults to "policy".
+-
+-    Returns:
+-        The transformed observation tensor with left-right symmetry applied.
+-    """
+-    # copy observation tensor
+-    obs = obs.clone()
+-    device = obs.device
+-    # ang vel
+-    obs[:, 0:3] = obs[:, 0:3] * torch.tensor([-1, 1, -1], device=device)
+-    # projected gravity
+-    obs[:, 3:6] = obs[:, 3:6] * torch.tensor([1, -1, 1], device=device)
+-    # velocity command
+-    obs[:, 6:9] = obs[:, 6:9] * torch.tensor([1, -1, -1], device=device)
+-    # joint pos
+-    obs[:, 9:21] = _switch_anymal_joints_left_right(obs[:, 9:21])
+-    # joint vel
+-    obs[:, 21:33] = _switch_anymal_joints_left_right(obs[:, 21:33])
+-    # last actions
+-    obs[:, 33:45] = _switch_anymal_joints_left_right(obs[:, 33:45])
+-
+-    return obs
+-
+-
+-def _transform_obs_front_back(env: ManagerBasedRLEnv, obs: torch.Tensor, obs_type: str = "policy") -> torch.Tensor:
+-    """Applies a front-back symmetry transformation to the observation tensor.
+-
+-    This function modifies the given observation tensor by applying transformations
+-    that represent a symmetry with respect to the front-back axis. This includes negating
+-    certain components of the linear and angular velocities, projected gravity, velocity commands,
+-    and flipping the joint positions, joint velocities, and last actions for the ANYmal robot.
+-    Additionally, if height-scan data is present, it is flipped along the relevant dimension.
+-
+-    Args:
+-        env: The environment instance from which the observation is obtained.
+-        obs: The observation tensor to be transformed.
+-        obs_type: The type of observation to augment. Defaults to "policy".
+-
+-    Returns:
+-        The transformed observation tensor with front-back symmetry applied.
+-    """
+-    # copy observation tensor
+-    obs = obs.clone()
+-    device = obs.device
+-    # ang vel
+-    obs[:, 0:3] = obs[:, 0:3] * torch.tensor([1, -1, -1], device=device)
+-    # projected gravity
+-    obs[:, 3:6] = obs[:, 3:6] * torch.tensor([-1, 1, 1], device=device)
+-    # velocity command
+-    obs[:, 6:9] = obs[:, 6:9] * torch.tensor([-1, 1, -1], device=device)
+-    # joint pos
+-    obs[:, 9:21] = _switch_anymal_joints_front_back(obs[:, 9:21])
+-    # joint vel
+-    obs[:, 21:33] = _switch_anymal_joints_front_back(obs[:, 21:33])
+-    # last actions
+-    obs[:, 33:45] = _switch_anymal_joints_front_back(obs[:, 33:45])
+-
+-    return obs
+-
+-
+-"""
+-Symmetry functions for actions.
+-"""
+-
+-
+-def _transform_actions_left_right(actions: torch.Tensor) -> torch.Tensor:
+-    """Applies a left-right symmetry transformation to the actions tensor.
+-
+-    This function modifies the given actions tensor by applying transformations
+-    that represent a symmetry with respect to the left-right axis. This includes
+-    flipping the joint positions, joint velocities, and last actions for the
+-    ANYmal robot.
+-
+-    Args:
+-        actions: The actions tensor to be transformed.
+-
+-    Returns:
+-        The transformed actions tensor with left-right symmetry applied.
+-    """
+-    actions = actions.clone()
+-    actions[:] = _switch_anymal_joints_left_right(actions[:])
+-    return actions
+-
+-
+-def _transform_actions_front_back(actions: torch.Tensor) -> torch.Tensor:
+-    """Applies a front-back symmetry transformation to the actions tensor.
+-
+-    This function modifies the given actions tensor by applying transformations
+-    that represent a symmetry with respect to the front-back axis. This includes
+-    flipping the joint positions, joint velocities, and last actions for the
+-    ANYmal robot.
+-
+-    Args:
+-        actions: The actions tensor to be transformed.
+-
+-    Returns:
+-        The transformed actions tensor with front-back symmetry applied.
+-    """
+-    actions = actions.clone()
+-    actions[:] = _switch_anymal_joints_front_back(actions[:])
+-    return actions
+-
+-
+-"""
+-Helper functions for symmetry.
+-
+-In Isaac Sim, the joint ordering is as follows:
+-[
+-    'LF_HAA', 'LH_HAA', 'RF_HAA', 'RH_HAA',
+-    'LF_HFE', 'LH_HFE', 'RF_HFE', 'RH_HFE',
+-    'LF_KFE', 'LH_KFE', 'RF_KFE', 'RH_KFE'
+-]
+-
+-Correspondingly, the joint ordering for the ANYmal robot is:
+-
+-* LF = left front --> [0, 4, 8]
+-* LH = left hind --> [1, 5, 9]
+-* RF = right front --> [2, 6, 10]
+-* RH = right hind --> [3, 7, 11]
+-"""
+-
+-
+-def _switch_anymal_joints_left_right(joint_data: torch.Tensor) -> torch.Tensor:
+-    """Applies a left-right symmetry transformation to the joint data tensor."""
+-    joint_data_switched = torch.zeros_like(joint_data)
+-    # left <-- right
+-    joint_data_switched[..., [0, 4, 8, 1, 5, 9]] = joint_data[..., [2, 6, 10, 3, 7, 11]]
+-    # right <-- left
+-    joint_data_switched[..., [2, 6, 10, 3, 7, 11]] = joint_data[..., [0, 4, 8, 1, 5, 9]]
+-
+-    # Flip the sign of the HAA joints
+-    joint_data_switched[..., [0, 1, 2, 3]] *= -1.0
+-
+-    return joint_data_switched
+-
+-
+-def _switch_anymal_joints_front_back(joint_data: torch.Tensor) -> torch.Tensor:
+-    """Applies a front-back symmetry transformation to the joint data tensor."""
+-    joint_data_switched = torch.zeros_like(joint_data)
+-    # front <-- hind
+-    joint_data_switched[..., [0, 4, 8, 2, 6, 10]] = joint_data[..., [1, 5, 9, 3, 7, 11]]
+-    # hind <-- front
+-    joint_data_switched[..., [1, 5, 9, 3, 7, 11]] = joint_data[..., [0, 4, 8, 2, 6, 10]]
+-
+-    # Flip the sign of the HFE and KFE joints
+-    joint_data_switched[..., 4:] *= -1
+-
+-    return joint_data_switched
+diff --git a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/velocity_env_cfg.py b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/velocity_env_cfg.py
+index d8a85bc..c83a69a 100644
+--- a/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/velocity_env_cfg.py
++++ b/source/unitree_gym/unitree_gym/tasks/manager_based/locomotion/velocity/velocity_env_cfg.py
+@@ -22,22 +22,30 @@ from isaaclab.managers import RewardTermCfg as RewTerm
+ from isaaclab.managers import SceneEntityCfg
+ from isaaclab.managers import TerminationTermCfg as DoneTerm
+ from isaaclab.scene import InteractiveSceneCfg
+-from isaaclab.sensors import ContactSensorCfg, RayCasterCfg, patterns
++from isaaclab.sensors import ContactSensorCfg, RayCasterCfg, patterns, RayCasterCameraCfg
+ from isaaclab.terrains import TerrainImporterCfg
+ from ..terrains.traverse_terrain_importer import TraverseTerrainImporter
+ from isaaclab.utils import configclass
+ from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
+ from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
++from isaaclab.envs.mdp.events import ( 
++randomize_rigid_body_mass,
++apply_external_force_torque,
++reset_joints_by_scale
++)
+ 
+ import unitree_gym.tasks.manager_based.locomotion.velocity.mdp as mdp
+ 
++from .mdp import terminations, rewards, traverses, events, observations, traverse_commands
+ ##
+ # Pre-defined configs
+ ##
+ # from isaaclab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
+ from unitree_gym.tasks.manager_based.locomotion.terrains.extreme_traverse.config.traverse import TRAVERSE_TERRAINS_CFG
+ # from unitree_gym.tasks.manager_based.locomotion.velocity.terrains.wall import WALLS_TERRAINS_CFG
+-
++from .envs import TraverseManagerBasedRLEnvCfg
++from .mdp.traverse_actions import DelayedJointPositionActionCfg 
++# TraverseEventsCfg, TeacherRewardsCfg....
+ ##
+ # Scene definition
+ ##
+@@ -87,8 +95,12 @@ class MySceneGo2Cfg(InteractiveSceneCfg):
+         debug_vis=False,
+         mesh_prim_paths=["/World/ground"],
+     )
+-    contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
+-    # lights
++    contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", 
++                                      history_length=2, 
++                                      track_air_time=True, 
++                                      debug_vis= False,
++                                      force_threshold=1.
++                                      )
+     sky_light = AssetBaseCfg(
+         prim_path="/World/skyLight",
+         spawn=sim_utils.DomeLightCfg(
+@@ -107,27 +119,42 @@ class MySceneGo2Cfg(InteractiveSceneCfg):
+ class CommandsCfg:
+     """Command specifications for the MDP."""
+ 
+-    base_velocity = mdp.UniformThresholdVelocityCommandCfg(
++    base_velocity = traverse_commands.TraverseCommandCfg(
+         asset_name="robot",
+-        resampling_time_range=(10.0, 10.0),
+-        rel_standing_envs=0.02,
+-        rel_heading_envs=1.0,
+-        heading_command=True,
+-        heading_control_stiffness=0.5,
+-        debug_vis=True,
+-        ranges=mdp.UniformThresholdVelocityCommandCfg.Ranges(
+-            lin_vel_x=(-1.0, 1.0), lin_vel_y=(-1.0, 1.0), ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
++        resampling_time_range=(6.0,6.0 ),
++        heading_control_stiffness=0.8,
++        ranges=traverse_commands.TraverseCommandCfg.Ranges(
++            lin_vel_x=(0.3, 0.8), 
++            heading=(-1.6, 1.6)
+         ),
++        clips= traverse_commands.TraverseCommandCfg.Clips(
++            lin_vel_clip = 0.2,
++            ang_vel_clip = 0.4
++        )
+     )
+ 
++@configclass
++class TraverseEventsCfg:
++    """Command specifications for the MDP."""
++    base_traverse = traverses.TraverseEventsCfg(
++        asset_name = 'robot',
++        )
++
+ 
+ @configclass
+ class ActionsCfg:
+-    """Action specifications for the MDP."""
++    joint_pos = DelayedJointPositionActionCfg(
++        asset_name="robot", 
++        joint_names=[".*"], 
++        scale=0.25, 
++        use_default_offset=True,
++        action_delay_steps = [1, 1],
++        delay_update_global_steps = 24 * 8000,
++        history_length = 8,
++        use_delay = True,
++        clip = {'.*': (-4.8,4.8)}
++        )
+ 
+-    joint_pos = mdp.JointPositionActionCfg(
+-        asset_name="robot", joint_names=[".*"], scale=0.5, use_default_offset=True, clip=None, preserve_order=True
+-    )
+ 
+ 
+ @configclass
+@@ -137,535 +164,239 @@ class ObservationsCfg:
+     @configclass
+     class PolicyCfg(ObsGroup):
+         """Observations for policy group."""
+-
+         # observation terms (order preserved)
+-        base_lin_vel = ObsTerm(
+-            func=mdp.base_lin_vel,
+-            noise=Unoise(n_min=-0.1, n_max=0.1),
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        base_ang_vel = ObsTerm(
+-            func=mdp.base_ang_vel,
+-            noise=Unoise(n_min=-0.2, n_max=0.2),
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        projected_gravity = ObsTerm(
+-            func=mdp.projected_gravity,
+-            noise=Unoise(n_min=-0.05, n_max=0.05),
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        velocity_commands = ObsTerm(
+-            func=mdp.generated_commands,
+-            params={"command_name": "base_velocity"},
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        joint_pos = ObsTerm(
+-            func=mdp.joint_pos_rel,
+-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+-            noise=Unoise(n_min=-0.01, n_max=0.01),
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        joint_vel = ObsTerm(
+-            func=mdp.joint_vel_rel,
+-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+-            noise=Unoise(n_min=-1.5, n_max=1.5),
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        actions = ObsTerm(
+-            func=mdp.last_action,
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        height_scan = ObsTerm(
+-            func=mdp.height_scan,
+-            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+-            noise=Unoise(n_min=-0.1, n_max=0.1),
+-            clip=(-1.0, 1.0),
+-            scale=1.0,
+-        )
+-
+-        def __post_init__(self):
+-            self.enable_corruption = True
+-            self.concatenate_terms = True
+-
+-    @configclass
+-    class CriticCfg(ObsGroup):
+-        """Observations for critic group."""
+-
+-        # observation terms (order preserved)
+-        base_lin_vel = ObsTerm(
+-            func=mdp.base_lin_vel,
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        base_ang_vel = ObsTerm(
+-            func=mdp.base_ang_vel,
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        projected_gravity = ObsTerm(
+-            func=mdp.projected_gravity,
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        velocity_commands = ObsTerm(
+-            func=mdp.generated_commands,
+-            params={"command_name": "base_velocity"},
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        joint_pos = ObsTerm(
+-            func=mdp.joint_pos_rel,
+-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        joint_vel = ObsTerm(
+-            func=mdp.joint_vel_rel,
+-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        actions = ObsTerm(
+-            func=mdp.last_action,
+-            clip=(-100.0, 100.0),
+-            scale=1.0,
+-        )
+-        height_scan = ObsTerm(
+-            func=mdp.height_scan,
+-            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+-            clip=(-1.0, 1.0),
+-            scale=1.0,
++        extreme_traverse_observations = ObsTerm(
++            func=observations.ExtremeTraverseObservations,
++            params={            
++            "asset_cfg":SceneEntityCfg("robot"),
++            "sensor_cfg":SceneEntityCfg("contact_forces", body_names=".*_foot"),
++            "traverse_name":'base_traverse',
++            "history_length": 10
++            },
++            clip= (-100,100)
+         )
+-        # joint_effort = ObsTerm(
+-        #     func=mdp.joint_effort,
+-        #     clip=(-100, 100),
+-        #     scale=0.01,
+-        # )
+-
+-        def __post_init__(self):
+-            self.enable_corruption = False
+-            self.concatenate_terms = True
+-
+-    # observation groups
+     policy: PolicyCfg = PolicyCfg()
+-    critic: CriticCfg = CriticCfg()
++
++    # @configclass
++    # class CriticCfg(ObsGroup):
++    #     """Observations for policy group."""
++    #     # observation terms (order preserved)
++    #     extreme_traverse_observations = ObsTerm(
++    #         func=observations.ExtremeTraverseObservations,
++    #         params={            
++    #         "asset_cfg":SceneEntityCfg("robot"),
++    #         "sensor_cfg":SceneEntityCfg("contact_forces", body_names=".*_foot"),
++    #         "traverse_name":'base_traverse',
++    #         "history_length": 10
++    #         },
++    #         clip= (-100,100)
++    #     )
++    # # observation groups
++    # critic: CriticCfg = CriticCfg()
+ 
+ 
+ @configclass
+ class EventCfg:
++    ### Modified origin events, plz see relative issue https://github.com/isaac-sim/IsaacLab/issues/1955
+     """Configuration for events."""
+-
+-    # startup
+-    randomize_rigid_body_material = EventTerm(
+-        func=mdp.randomize_rigid_body_material,
+-        mode="startup",
+-        params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=".*"),
+-            "static_friction_range": (0.3, 1.0),
+-            "dynamic_friction_range": (0.3, 0.8),
+-            "restitution_range": (0.0, 0.5),
+-            "num_buckets": 64,
+-        },
++    reset_root_state = EventTerm(
++        func= events.reset_root_state,
++        params = {'offset': 3.},
++        mode="reset",
+     )
+-
+-    randomize_rigid_body_mass_base = EventTerm(
+-        func=mdp.randomize_rigid_body_mass,
+-        mode="startup",
++    reset_robot_joints = EventTerm(
++        func= reset_joints_by_scale, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-            "mass_distribution_params": (-1.0, 3.0),
+-            "operation": "add",
+-            "recompute_inertia": True,
++            "position_range": (0.95, 1.05),
++            "velocity_range": (0.0, 0.0),
+         },
++        mode="reset",
+     )
+-
+-    randomize_rigid_body_mass_others = EventTerm(
+-        func=mdp.randomize_rigid_body_mass,
++    physics_material = EventTerm( # Okay
++        func=events.randomize_rigid_body_material,
+         mode="startup",
+         params={
+             "asset_cfg": SceneEntityCfg("robot", body_names=".*"),
+-            "mass_distribution_params": (0.7, 1.3),
+-            "operation": "scale",
+-            "recompute_inertia": True,
++            "friction_range": (0.6, 2.0),
++            "num_buckets": 64,
+         },
+     )
+ 
+-    # Skip: inertia updated via mass randomization by setting recompute_inertia=True
+-    # randomize_rigid_body_inertia = EventTerm(
+-    #     func=mdp.randomize_rigid_body_inertia,
+-    #     mode="startup",
++    ## we don't use this event, If you use this, you will get a bad result
++    # randomize_actuator_gains = EventTerm(
++    #     func= events.randomize_actuator_gains,
+     #     params={
+-    #         "asset_cfg": SceneEntityCfg("robot", body_names=".*"),
+-    #         "inertia_distribution_params": (0.5, 1.5),
++    #         "asset_cfg" :SceneEntityCfg("robot", joint_names=".*"),
++    #         "stiffness_distribution_params": (0.975, 1.025),  
++    #         "damping_distribution_params": (0.975, 1.025),
+     #         "operation": "scale",
+-    #     },
++    #         },
++    #     mode="startup",
+     # )
+-
+-    randomize_com_positions = EventTerm(
+-        func=mdp.randomize_rigid_body_com,
++    randomize_rigid_body_mass = EventTerm(
++        func= randomize_rigid_body_mass,
+         mode="startup",
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=".*"),
+-            "com_range": {"x": (-0.05, 0.05), "y": (-0.05, 0.05), "z": (-0.05, 0.05)},
+-        },
+-    )
+-
+-
+-
+-    # reset
+-    randomize_apply_external_force_torque = EventTerm(
+-        func=mdp.apply_external_force_torque,
+-        mode="reset",
+-        params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-            "force_range": (-10.0, 10.0),
+-            "torque_range": (-10.0, 10.0),
+-        },
+-    )
+-
+-    randomize_reset_joints = EventTerm(
+-        func=mdp.reset_joints_by_scale,
+-        # func=mdp.reset_joints_by_offset,
+-        mode="reset",
+-        params={
+-            "position_range": (1.0, 1.0),
+-            "velocity_range": (0.0, 0.0),
+-        },
++            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
++            "mass_distribution_params": (-1., 3.0),
++            "operation": "add",
++            },
+     )
+-
+-    randomize_actuator_gains = EventTerm(
+-        func=mdp.randomize_actuator_gains,
+-        mode="reset",
++    randomize_rigid_body_com = EventTerm(
++        func= events.randomize_rigid_body_com,
++        mode="startup",
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
+-            "stiffness_distribution_params": (0.5, 2.0),
+-            "damping_distribution_params": (0.5, 2.0),
+-            "operation": "scale",
+-            "distribution": "uniform",
+-        },
++            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
++            "com_range": {'x':(-0.02, 0.02),'y':(-0.02, 0.02),'z':(-0.02, 0.02)}
++            },
+     )
+-
+-    # reset_root_state = EventTerm(
+-    #     func=mdp.reset_root_state,
+-    #     mode="reset",
+-    #     params={
+-    #         "asset_cfg": SceneEntityCfg("robot"),  # 哪个资产
+-    #         "margin": -0.6,                         # 距离墙入口前移 0.6 米
+-    #     }
++    # random_camera_position = EventTerm(
++    #     func= events.random_camera_position,
++    #     mode="startup",
++    #     params={'sensor_cfg':SceneEntityCfg("depth_camera"),
++    #             'rot_noise_range': {'pitch':(-5, 5)},
++    #             'convention':'ros',
++    #             },
+     # )
+-
+-    randomize_reset_base = EventTerm(
+-        func=mdp.reset_root_state_uniform,
++    push_by_setting_velocity = EventTerm( # Okay
++        func = events.push_by_setting_velocity, 
++        params={'velocity_range':{"x":(-0.5, 0.5), "y":(-0.5, 0.5)}},
++        interval_range_s = (8. ,8. ),
++        is_global_time= True, 
++        mode="interval",
++    )
++    base_external_force_torque = EventTerm(  # Okay
++        func=apply_external_force_torque,
+         mode="reset",
+         params={
+-            "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
+-            "velocity_range": {
+-                "x": (-0.5, 0.5),
+-                "y": (-0.5, 0.5),
+-                "z": (-0.5, 0.5),
+-                "roll": (-0.5, 0.5),
+-                "pitch": (-0.5, 0.5),
+-                "yaw": (-0.5, 0.5),
+-            },
++            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
++            "force_range": (0.0, 0.0),
++            "torque_range": (-0.0, 0.0),
+         },
+     )
+ 
+-    # spawn_walls = EventTerm(func=mdp.spawn_walls, mode="prestartup")
+-
+-    # interval
+-    randomize_push_robot = EventTerm(
+-        func=mdp.push_by_setting_velocity,
+-        mode="interval",
+-        interval_range_s=(10.0, 15.0),
+-        params={"velocity_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5)}},
+-    )
+-
+ 
+ @configclass
+ class RewardsCfg:
+     """Reward terms for the MDP."""
+ 
+-    # General
+-    is_terminated = RewTerm(func=mdp.is_terminated, weight=0.0)
+-
+-    # Root penalties
+-    lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=0.0)
+-    ang_vel_xy_l2 = RewTerm(func=mdp.ang_vel_xy_l2, weight=0.0)
+-    flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=0.0)
+-    base_height_l2 = RewTerm(
+-        func=mdp.base_height_l2,
+-        weight=0.0,
++# Available Body strings: 
++    reward_collision = RewTerm(
++        func=rewards.reward_collision, 
++        weight=-10., 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-            "sensor_cfg": SceneEntityCfg("height_scanner_base"),
+-            "target_height": 0.0,
++            "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
+         },
+     )
+-    body_lin_acc_l2 = RewTerm(
+-        func=mdp.body_lin_acc_l2,
+-        weight=0.0,
+-        params={"asset_cfg": SceneEntityCfg("robot", body_names="")},
+-    )
+-
+-    # Joint penalties
+-    joint_torques_l2 = RewTerm(
+-        func=mdp.joint_torques_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+-    )
+-    joint_vel_l2 = RewTerm(
+-        func=mdp.joint_vel_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+-    )
+-    joint_acc_l2 = RewTerm(
+-        func=mdp.joint_acc_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+-    )
+-
+-    def create_joint_deviation_l1_rewterm(self, attr_name, weight, joint_names_pattern):
+-        rew_term = RewTerm(
+-            func=mdp.joint_deviation_l1,
+-            weight=weight,
+-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=joint_names_pattern)},
+-        )
+-        setattr(self, attr_name, rew_term)
+-
+-    joint_pos_limits = RewTerm(
+-        func=mdp.joint_pos_limits, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+-    )
+-    joint_vel_limits = RewTerm(
+-        func=mdp.joint_vel_limits,
+-        weight=0.0,
+-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*"), "soft_ratio": 1.0},
+-    )
+-    joint_power = RewTerm(
+-        func=mdp.joint_power,
+-        weight=0.0,
++    reward_feet_edge = RewTerm(
++        func=rewards.reward_feet_edge, 
++        weight=-1.0, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
++            "asset_cfg":SceneEntityCfg(name="robot", body_names=["FL_foot","FR_foot","RL_foot","RR_foot"]),
++            "sensor_cfg":SceneEntityCfg(name="contact_forces", body_names=".*_foot"),
++            "traverse_name":'base_traverse',
+         },
+     )
+-
+-    stand_still = RewTerm(
+-        func=mdp.stand_still,
+-        weight=0.0,
++    reward_torques = RewTerm(
++        func=rewards.reward_torques, 
++        weight=-0.00001, 
+         params={
+-            "command_name": "base_velocity",
+-            "command_threshold": 0.1,
+-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
++            "asset_cfg":SceneEntityCfg("robot"),
+         },
+     )
+-
+-    joint_pos_penalty = RewTerm(
+-        func=mdp.joint_pos_penalty,
+-        weight=0.0,
++    reward_dof_error = RewTerm(
++        func=rewards.reward_dof_error, 
++        weight=-0.04, 
+         params={
+-            "command_name": "base_velocity",
+-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
+-            "stand_still_scale": 5.0,
+-            "velocity_threshold": 0.5,
+-            "command_threshold": 0.1,
++            "asset_cfg":SceneEntityCfg("robot"),
+         },
+     )
+-
+-    joint_mirror = RewTerm(
+-        func=mdp.joint_mirror,
+-        weight=0.0,
++    reward_hip_pos = RewTerm(
++        func=rewards.reward_hip_pos, 
++        weight=-0.5, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot"),
+-            "mirror_joints": [["FR.*", "RL.*"], ["FL.*", "RR.*"]],
++            "asset_cfg":SceneEntityCfg("robot", joint_names=".*_hip_joint"),
+         },
+     )
+-
+-    action_mirror = RewTerm(
+-        func=mdp.action_mirror,
+-        weight=0.0,
++    reward_ang_vel_xy = RewTerm(
++        func=rewards.reward_ang_vel_xy, 
++        weight=-0.05, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot"),
+-            "mirror_joints": [["FR.*", "RL.*"], ["FL.*", "RR.*"]],
++            "asset_cfg":SceneEntityCfg("robot"),
+         },
+     )
+-
+-    action_sync = RewTerm(
+-        func=mdp.action_sync,
+-        weight=0.0,
++    reward_action_rate = RewTerm(
++        func=rewards.reward_action_rate, 
++        weight=-0.1, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot"),
+-            "joint_groups": [
+-                ["FR_hip_joint", "FL_hip_joint", "RL_hip_joint", "RR_hip_joint"],
+-                ["FR_thigh_joint", "FL_thigh_joint", "RL_thigh_joint", "RR_thigh_joint"],
+-                ["FR_calf_joint", "FL_calf_joint", "RL_calf_joint", "RR_calf_joint"],
+-            ],
++          "asset_cfg":SceneEntityCfg("robot"),
+         },
+     )
+-
+-    # Action penalties
+-    applied_torque_limits = RewTerm(
+-        func=mdp.applied_torque_limits,
+-        weight=0.0,
+-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")},
+-    )
+-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=0.0)
+-    # smoothness_1 = RewTerm(func=mdp.smoothness_1, weight=0.0)  # Same as action_rate_l2
+-    # smoothness_2 = RewTerm(func=mdp.smoothness_2, weight=0.0)  # Unvaliable now
+-
+-    # Contact sensor
+-    undesired_contacts = RewTerm(
+-        func=mdp.undesired_contacts,
+-        weight=0.0,
++    reward_dof_acc = RewTerm(
++        func=rewards.reward_dof_acc, 
++        weight=-2.5e-7, 
+         params={
+-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=""),
+-            "threshold": 1.0,
++            "asset_cfg":SceneEntityCfg("robot"),
+         },
+     )
+-    contact_forces = RewTerm(
+-        func=mdp.contact_forces,
+-        weight=0.0,
+-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=""), "threshold": 100.0},
+-    )
+-
+-    # Velocity-tracking rewards
+-    track_lin_vel_xy_exp = RewTerm(
+-        func=mdp.track_lin_vel_xy_exp, weight=0.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+-    )
+-    track_ang_vel_z_exp = RewTerm(
+-        func=mdp.track_ang_vel_z_exp, weight=0.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+-    )
+-
+-    # Others
+-    feet_air_time = RewTerm(
+-        func=mdp.feet_air_time,
+-        weight=0.0,
++    reward_lin_vel_z = RewTerm(
++        func=rewards.reward_lin_vel_z, 
++        weight=-1.0, 
+         params={
+-            "command_name": "base_velocity",
+-            "threshold": 0.5,
+-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=""),
++            "asset_cfg":SceneEntityCfg("robot"),
++            "traverse_name":'base_traverse',
+         },
+     )
+-
+-    feet_air_time_variance = RewTerm(
+-        func=mdp.feet_air_time_variance_penalty,
+-        weight=0,
+-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names="")},
+-    )
+-
+-    feet_gait = RewTerm(
+-        func=mdp.GaitReward,
+-        weight=0.0,
++    reward_orientation = RewTerm(
++        func=rewards.reward_orientation, 
++        weight=-1.0, 
+         params={
+-            "std": math.sqrt(0.5),
+-            "command_name": "base_velocity",
+-            "max_err": 0.2,
+-            "velocity_threshold": 0.5,
+-            "command_threshold": 0.1,
+-            "synced_feet_pair_names": (("", ""), ("", "")),
+-            "asset_cfg": SceneEntityCfg("robot"),
+-            "sensor_cfg": SceneEntityCfg("contact_forces"),
++            "asset_cfg":SceneEntityCfg("robot"),
++            "traverse_name":'base_traverse',
+         },
+     )
+-
+-    feet_contact = RewTerm(
+-        func=mdp.feet_contact,
+-        weight=0.0,
+-        params={
+-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=""),
+-            "command_name": "base_velocity",
+-            "expect_contact_num": 2,
+-        },
+-    )
+-
+-    feet_contact_without_cmd = RewTerm(
+-        func=mdp.feet_contact_without_cmd,
+-        weight=0.0,
+-        params={
+-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=""),
+-            "command_name": "base_velocity",
+-        },
+-    )
+-
+-    feet_stumble = RewTerm(
+-        func=mdp.feet_stumble,
+-        weight=0.0,
++    reward_feet_stumble = RewTerm(
++        func=rewards.reward_feet_stumble, 
++        weight=-1.0, 
+         params={
+-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=""),
++            "sensor_cfg":SceneEntityCfg("contact_forces", body_names=".*_foot"),
+         },
+     )
+-
+-    feet_slide = RewTerm(
+-        func=mdp.feet_slide,
+-        weight=0.0,
++    reward_tracking_goal_vel = RewTerm(
++        func=rewards.reward_tracking_goal_vel, 
++        weight=1.5, 
+         params={
+-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=""),
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
++            "asset_cfg":SceneEntityCfg("robot"),
++            "traverse_name":'base_traverse'
+         },
+     )
+-
+-    feet_height = RewTerm(
+-        func=mdp.feet_height,
+-        weight=0.0,
++    reward_tracking_yaw = RewTerm(
++        func=rewards.reward_tracking_yaw, 
++        weight=0.5, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-            "tanh_mult": 2.0,
+-            "target_height": 0.05,
+-            "command_name": "base_velocity",
++            "asset_cfg":SceneEntityCfg("robot"),
++            "traverse_name":'base_traverse'
+         },
+     )
+-
+-    feet_height_body = RewTerm(
+-        func=mdp.feet_height_body,
+-        weight=0.0,
++    reward_delta_torques = RewTerm(
++        func=rewards.reward_delta_torques, 
++        weight=-1.0e-7, 
+         params={
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-            "tanh_mult": 2.0,
+-            "target_height": -0.3,
+-            "command_name": "base_velocity",
++            "asset_cfg":SceneEntityCfg("robot"),
+         },
+     )
+ 
+-    feet_distance_y_exp = RewTerm(
+-        func=mdp.feet_distance_y_exp,
+-        weight=0.0,
+-        params={
+-            "std": math.sqrt(0.25),
+-            "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-            "stance_width": float,
+-        },
+-    )
+-
+-    # feet_distance_xy_exp = RewTerm(
+-    #     func=mdp.feet_distance_xy_exp,
+-    #     weight=0.0,
+-    #     params={
+-    #         "std": math.sqrt(0.25),
+-    #         "asset_cfg": SceneEntityCfg("robot", body_names=""),
+-    #         "stance_length": float,
+-    #         "stance_width": float,
+-    #     },
+-    # )
+-
+-    upward = RewTerm(func=mdp.upward, weight=0.0)
+-
+ 
+ @configclass
+ class TerminationsCfg:
+     """Termination terms for the MDP."""
+ 
+-    # MDP terminations
+-    time_out = DoneTerm(func=mdp.time_out, time_out=True)
+-    # command_resample
+-    terrain_out_of_bounds = DoneTerm(
+-        func=mdp.terrain_out_of_bounds,
+-        params={"asset_cfg": SceneEntityCfg("robot"), "distance_buffer": 3.0},
++    total_terminates = DoneTerm(
++        func=terminations.terminate_episode, 
+         time_out=True,
+-    )
+-
+-    # Contact sensor
+-    illegal_contact = DoneTerm(
+-        func=mdp.illegal_contact,
+-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=""), "threshold": 1.0},
++        params= {
++            "asset_cfg":SceneEntityCfg("robot")
++        },
+     )
+ 
+ 
+@@ -688,25 +419,25 @@ class TerminationsCfg:
+ class CurriculumCfg:
+     """Curriculum terms for the MDP."""
+ 
+-    # terrain_levels = CurrTerm(func=mdp.terrain_levels_vel)
++    # # terrain_levels = CurrTerm(func=mdp.terrain_levels_vel)
+ 
+-    command_levels = CurrTerm(
+-        func=mdp.command_levels_vel,
+-        params={
+-            "reward_term_name": "track_lin_vel_xy_exp",
+-            "range_multiplier": (0.1, 1.0),
+-        },
+-    )
++    # command_levels = CurrTerm(
++    #     func=mdp.command_levels_vel,
++    #     params={
++    #         "reward_term_name": "track_lin_vel_xy_exp",
++    #         "range_multiplier": (0.1, 1.0),
++    #     },
++    # )
+ 
+-    wall_width_curriculum = CurrTerm(
+-        func=mdp.wall_curriculum_update, # <--- 调用我们定义的函数
+-        params={
+-            "initial_width": 0.6,  # 初始墙壁间距（例如 0.7米）
+-            "final_width": 0.4,   # 最终墙壁间距（例如 0.4米）
+-            "max_round": 20000,  # 课程持续的最大回合数
+-        },
+-    )
+-    # --------------------------
++    # wall_width_curriculum = CurrTerm(
++    #     func=mdp.wall_curriculum_update, # <--- 调用我们定义的函数
++    #     params={
++    #         "initial_width": 0.6,  # 初始墙壁间距（例如 0.7米）
++    #         "final_width": 0.4,   # 最终墙壁间距（例如 0.4米）
++    #         "max_round": 20000,  # 课程持续的最大回合数
++    #     },
++    # )
++    # # --------------------------
+ 
+ 
+ ##
+@@ -715,11 +446,11 @@ class CurriculumCfg:
+ 
+ 
+ @configclass
+-class LocomotionVelocityGo2EnvCfg(ManagerBasedRLEnvCfg):
++class LocomotionVelocityGo2EnvCfg(TraverseManagerBasedRLEnvCfg):
+     """Configuration for the locomotion velocity-tracking environment."""
+ 
+     # Scene settings
+-    scene: MySceneGo2Cfg = MySceneGo2Cfg(num_envs=4096, env_spacing=6.0)
++    scene: MySceneGo2Cfg = MySceneGo2Cfg(num_envs=1024, env_spacing=6.0)
+     # Basic settings
+     observations: ObservationsCfg = ObservationsCfg()
+     actions: ActionsCfg = ActionsCfg()
+@@ -727,8 +458,8 @@ class LocomotionVelocityGo2EnvCfg(ManagerBasedRLEnvCfg):
+     # MDP settings
+     rewards: RewardsCfg = RewardsCfg()
+     terminations: TerminationsCfg = TerminationsCfg()
++    traverses: TraverseEventsCfg = TraverseEventsCfg()
+     events: EventCfg = EventCfg()
+-    curriculum: CurriculumCfg = CurriculumCfg()
+ 
+     def __post_init__(self):
+         """Post initialization."""
