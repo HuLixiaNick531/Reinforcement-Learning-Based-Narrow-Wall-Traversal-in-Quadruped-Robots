@@ -17,7 +17,7 @@ It integrates **Isaac Sim**, **Isaac Lab**, and **RSL-RL** for parallel simulati
 
 2. Make sure conda environment is available.
 
-2. Download Isaac Sim (Recommanded [v4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/introduction/quickstart_index.html) / [v5.0.0](https://docs.isaacsim.omniverse.nvidia.com/5.0.0/installation/quick-install.html)) .
+2. Download Isaac Sim (Recommanded [v5.0.0](https://docs.isaacsim.omniverse.nvidia.com/5.0.0/installation/quick-install.html)) .
 
 3. Download Isaac Lab (Recommanded [release/2.2.0](https://github.com/isaac-sim/IsaacLab/tree/release/2.2.0)) ;
 
