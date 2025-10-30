@@ -39,6 +39,17 @@ if [[ $? -ne 0 ]]; then
 fi
 echo "✅ Environment '${CONDA_ENV_NAME}' activate successfully."
 
+# change actor critic network files
+if [[ -f "${SCRIPT_PATH%/}/scripts/reinforcement_learning/rsl_rl/actor_critic.py" ]]; then
+    cp "${SCRIPT_PATH%/}/scripts/reinforcement_learning/rsl_rl/actor_critic.py" "${SCRIPT_PATH%/}/3rd_party/rsl_rl/rsl_rl/modules/actor_critic.py"
+    echo "✅ Actor-critic network file found."
+else
+    echo "⚠️ Actor-critic network file not found, use the original one."
+    if [[ -f "${SCRIPT_PATH%/}/3rd_party/rsl_rl/rsl_rl/modules/actor_critic.py.bak" ]]; then
+        cp "${SCRIPT_PATH%/}/3rd_party/rsl_rl/rsl_rl/modules/actor_critic.py.bak" "${SCRIPT_PATH%/}/3rd_party/rsl_rl/rsl_rl/modules/actor_critic.py"
+    fi
+fi
+
 # activate isaac sim conda env
 source "${ISAACSIM_LOCATION%/}"/setup_conda_env.sh
 if [[ $? -ne 0 ]]; then
