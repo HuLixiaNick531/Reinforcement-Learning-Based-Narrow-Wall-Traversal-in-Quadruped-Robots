@@ -4,14 +4,53 @@ This repository is based on **Isaac Lab** and implements a **reinforcement learn
 
 ---
 
-## 🧠 Project Overview
+## Project Overview
 
 The project aims to enable **autonomous narrow-wall traversal** using **reinforcement learning** techniques.  
 It integrates **Isaac Sim**, **Isaac Lab**, and **RSL-RL** for parallel simulation and policy optimization.
 
 ---
 
-## 📦 Tutorial
+## 🚀 Quick Start
+
+1. Make sure you have NVIDIA GPU.
+
+2. Make sure conda environment is available.
+
+2. Download Isaac Sim (Recommanded [v4.5.0](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/introduction/quickstart_index.html) / [v5.0.0](https://docs.isaacsim.omniverse.nvidia.com/5.0.0/installation/quick-install.html)) .
+
+3. Download Isaac Lab (Recommanded [release/2.2.0](https://github.com/isaac-sim/IsaacLab/tree/release/2.2.0)) ;
+
+4. Clone the repo.
+```bash
+git clone https://github.com/HuLixiaNick531/Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots.git
+```
+
+5. change the working directory and update params in 'vars.sh'.
+
+```bash
+cd Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots
+vim vars.sh
+```
+
+```makefile
+CONDA_ENV_NAME="env_group22"
+ISAACLAB_LOCATION="/home/weigangwang/wwg/IsaacLab220/"
+ISAACSIM_LOCATION="/home/weigangwang/software/isaacsim/"
+```
+The value of 'ISAACLAB_LOCATION' and 'ISAACSIM_LOCATION' should be replaced by your installation path of IsaacLab and IsaacSim.
+
+6. Run the 'startup.sh'.
+```bash
+bash startup.sh
+```
+
+8. Start training.
+```bash
+bash train.sh
+```
+
+## 🧩 Configuration
 
 ### 1. Clone Repository
 ```bash
@@ -20,7 +59,7 @@ cd Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots
 ```
 
 ### 2. Install Dependencies
-Make sure you have **Isaac Lab** and **RSL-RL** installed properly.  
+Make sure you have **Isaac Lab** and **Isaac Sim** installed properly.  
 Recommended environment:
 - Python ≥ 3.10  
 - NVIDIA GPU (for parallel simulation)
@@ -49,7 +88,7 @@ In IsaacLab dict, using command to create link with IsaacSim:
 ```bash
 cd isaaclab
 ln -s ~/software/isaacsim/ _isaac_sim
-./isaaclab.sh --installcd
+./isaaclab.sh --install
 python -m pip install -e source/isaaclab_rl
 ```
 '~/software/isaacsim/' should be replaced by the location of Isaac Sim.
@@ -77,7 +116,7 @@ python -m pip install -e source/robot_lab
 ``` -->
 ---
 
-## 🚀 Training Command
+## ⚙️ Training Command
 
 First activate conda env:
 

@@ -1,11 +1,18 @@
 #!/bin/bash
 
 # params
-CONDA_ENV_NAME="env_group22"
-ISAACLAB_LOCATION="/home/weigangwang/wwg/IsaacLab220/"
-ISAACSIM_LOCATION="/home/weigangwang/software/isaacsim/"
+source ./vars.sh
 
 # check params
+if [[ -z "$CONDA_ENV_NAME" ]]; then
+    echo "❌ Error: CONDA_ENV_NAME is empty."
+    echo "👉 Please set the CONDA_ENV_NAME variable before running this script."
+    echo "   Example:"
+    echo "     export CONDA_ENV_NAME=env_group22"
+    exit 1
+else
+    echo "✅ CONDA_ENV_NAME = $CONDA_ENV_NAME"
+fi
 if [[ -z "$ISAACLAB_LOCATION" || -z "$ISAACSIM_LOCATION" ]]; then
     echo "❌ Error: ISAACLAB_LOCATION or ISAACSIM_LOCATION is empty."
     echo "👉 Please set both environment variables before running this script."
@@ -87,6 +94,20 @@ if [[ $? -ne 0 ]]; then
 fi
 echo "✅ isaaclab_rl package installed successfully."
 
+# install unitree_gym
+python -m pip install -e ${SCRIPT_PATH%/}/source/unitree_gym
+if [[ $? -ne 0 ]]; then
+    echo "❌ Failed to install unitree_gym package."
+    exit 1
+fi
+echo "✅ unitree_gym package installed successfully."
+
+# install toml
+python -m pip install toml
+if [[ $? -ne 0 ]]; then
+    echo "❌ Failed to install toml package."
+fi
+echo "✅ toml package installed successfully."
 
 # install own rsl_rl
 echo "${SCRIPT_PATH%/}"
