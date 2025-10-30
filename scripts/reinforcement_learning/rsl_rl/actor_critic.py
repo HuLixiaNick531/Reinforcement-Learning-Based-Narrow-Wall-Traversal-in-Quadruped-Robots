@@ -17,137 +17,189 @@ class ActorCritic(nn.Module):
 
     def __init__(
         self,
-        num_actor_obs,
-        num_critic_obs,
-        num_actions,
-        # actor_hidden_dims=[256, 256, 256],
-        # critic_hidden_dims=[256, 256, 256],
-        activation="elu",
-        init_noise_std=1.0,
+        num_actor_obs: int,
+        num_critic_obs: int,
+        num_actions: int,
+        actor_hidden_dims=[256, 256, 256],
+        critic_hidden_dims=[256, 256, 256],
+        activation: str = "elu",
+        init_noise_std: float = 1.0,
         noise_std_type: str = "scalar",
+        actor_state_dim: int | None = None,
         **kwargs,
-    ):
+    ) -> None:
         if kwargs:
             print(
                 "ActorCritic.__init__ got unexpected arguments, which will be ignored: "
                 + str([key for key in kwargs.keys()])
             )
+
         super().__init__()
-        activation = resolve_nn_activation(activation)
+        act = resolve_nn_activation(activation)
 
+        # ------------------------------------------------------------------
+        # 1) 处理“要不要拆分”
+        # ------------------------------------------------------------------
+        # 如果不给，就当作老版本：所有 actor obs 一起进一个 encoder
+        if actor_state_dim is None:
+            actor_state_dim = num_actor_obs
+            actor_scan_dim = 0
+        else:
+            # 用户给了“前多少维是状态”，那剩下的就是 scan / 高度 / ray
+            actor_scan_dim = num_actor_obs - actor_state_dim
+            if actor_scan_dim < 0:
+                raise ValueError(
+                    f"actor_state_dim ({actor_state_dim}) > num_actor_obs ({num_actor_obs}) — check your cfg."
+                )
 
-        actor_hidden_dims=[256, 256, 256]
-        critic_hidden_dims=[256, 256, 256]
+        self.num_actor_obs = num_actor_obs
+        self.num_critic_obs = num_critic_obs
+        self.num_actions = num_actions
+        self.actor_state_dim = actor_state_dim
+        self.actor_scan_dim = actor_scan_dim
 
-        mlp_input_dim_a = num_actor_obs
-        mlp_input_dim_c = num_critic_obs
-        # Policy
-        actor_layers = []
-        actor_layers.append(nn.Linear(mlp_input_dim_a, actor_hidden_dims[0]))
-        actor_layers.append(activation)
-        for layer_index in range(len(actor_hidden_dims)):
-            if layer_index == len(actor_hidden_dims) - 1:
-                actor_layers.append(nn.Linear(actor_hidden_dims[layer_index], num_actions))
-            else:
-                actor_layers.append(nn.Linear(actor_hidden_dims[layer_index], actor_hidden_dims[layer_index + 1]))
-                actor_layers.append(activation)
+        # ------------------------------------------------------------------
+        # 2) state/scan 各自的 encoder
+        # ------------------------------------------------------------------
+        # 用 actor_hidden_dims 的“第一层大小”做个参考，不然你得再传一组
+        first_actor_dim = actor_hidden_dims[0] if len(actor_hidden_dims) > 0 else 256
+
+        # state encoder：走一条比较粗的
+        self.state_encoder = nn.Sequential(
+            nn.Linear(actor_state_dim, first_actor_dim),
+            act,
+        )
+
+        # scan encoder：如果有的话，走一条稍微细一点的
+        if actor_scan_dim > 0:
+            # 可以用一半的宽度
+            scan_width = max(first_actor_dim // 2, 64)
+            self.scan_encoder = nn.Sequential(
+                nn.Linear(actor_scan_dim, scan_width),
+                act,
+            )
+            fused_dim = first_actor_dim + scan_width
+        else:
+            self.scan_encoder = None
+            fused_dim = first_actor_dim
+
+        # ------------------------------------------------------------------
+        # 3) actor head：用用户给的 actor_hidden_dims 来堆后面的层
+        # ------------------------------------------------------------------
+        actor_layers: list[nn.Module] = []
+        in_dim = fused_dim
+        for i, h_dim in enumerate(actor_hidden_dims):
+            actor_layers.append(nn.Linear(in_dim, h_dim))
+            actor_layers.append(act)
+            in_dim = h_dim
+        # 最后一层输出动作
+        actor_layers.append(nn.Linear(in_dim, num_actions))
         self.actor = nn.Sequential(*actor_layers)
 
-        # Value function
-        critic_layers = []
-        critic_layers.append(nn.Linear(mlp_input_dim_c, critic_hidden_dims[0]))
-        critic_layers.append(activation)
-        for layer_index in range(len(critic_hidden_dims)):
-            if layer_index == len(critic_hidden_dims) - 1:
-                critic_layers.append(nn.Linear(critic_hidden_dims[layer_index], 1))
-            else:
-                critic_layers.append(nn.Linear(critic_hidden_dims[layer_index], critic_hidden_dims[layer_index + 1]))
-                critic_layers.append(activation)
+        # ------------------------------------------------------------------
+        # 4) critic head：保持原来风格
+        # ------------------------------------------------------------------
+        critic_layers: list[nn.Module] = []
+        in_dim = num_critic_obs
+        for i, h_dim in enumerate(critic_hidden_dims):
+            critic_layers.append(nn.Linear(in_dim, h_dim))
+            critic_layers.append(act)
+            in_dim = h_dim
+        critic_layers.append(nn.Linear(in_dim, 1))
         self.critic = nn.Sequential(*critic_layers)
 
-        print(f"Actor MLP: {self.actor}")
-        print(f"Critic MLP: {self.critic}")
-
-        # Action noise
+        # ------------------------------------------------------------------
+        # 5) 动作噪声
+        # ------------------------------------------------------------------
         self.noise_std_type = noise_std_type
         if self.noise_std_type == "scalar":
             self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
         elif self.noise_std_type == "log":
             self.log_std = nn.Parameter(torch.log(init_noise_std * torch.ones(num_actions)))
         else:
-            raise ValueError(f"Unknown standard deviation type: {self.noise_std_type}. Should be 'scalar' or 'log'")
+            raise ValueError(f"Unknown noise_std_type: {self.noise_std_type}")
 
-        # Action distribution (populated in update_distribution)
         self.distribution = None
-        # disable args validation for speedup
         Normal.set_default_validate_args(False)
 
-    @staticmethod
-    # not used at the moment
-    def init_weights(sequential, scales):
-        [
-            torch.nn.init.orthogonal_(module.weight, gain=scales[idx])
-            for idx, module in enumerate(mod for mod in sequential if isinstance(mod, nn.Linear))
-        ]
+        # # shape check printout
+        # print(
+        #     f"[DEBUG] init | obs={num_actor_obs} (state={actor_state_dim}, scan={actor_scan_dim}), "
+        #     f"[DEBUG] actor_dims={actor_hidden_dims}, critic_dims={critic_hidden_dims}"
+        # )
+        # with torch.no_grad():
+        #     dummy_actor_in = torch.randn(2, num_actor_obs)
+        #     dummy_critic_in = torch.randn(2, num_critic_obs)
+        #     actor_feat = self._encode_actor_obs(dummy_actor_in)
+        #     actor_out = self.actor(actor_feat)
+        #     critic_out = self.critic(dummy_critic_in)
+        #     print(f"[DEBUG] actor encoder out shape: {actor_feat.shape}")
+        #     print(f"[DEBUG] actor output shape:      {actor_out.shape}")
+        #     print(f"[DEBUG] critic output shape:     {critic_out.shape}")
 
-    def reset(self, dones=None):
-        pass
 
-    def forward(self):
-        raise NotImplementedError
+    # ======================================================================
+    # 内部: 编码 actor 输入
+    # ======================================================================
+    def _encode_actor_obs(self, obs: torch.Tensor) -> torch.Tensor:
+        # obs: [B, num_actor_obs]
+        state = obs[..., : self.actor_state_dim]
+        state_feat = self.state_encoder(state)
+        if self.actor_scan_dim > 0:
+            scan = obs[..., self.actor_state_dim : self.actor_state_dim + self.actor_scan_dim]
+            scan_feat = self.scan_encoder(scan)
+            feat = torch.cat([state_feat, scan_feat], dim=-1)
+        else:
+            feat = state_feat
+        return feat
 
-    @property
-    def action_mean(self):
-        return self.distribution.mean
-
-    @property
-    def action_std(self):
-        return self.distribution.stddev
-
-    @property
-    def entropy(self):
-        return self.distribution.entropy().sum(dim=-1)
-
-    def update_distribution(self, observations):
-        # compute mean
-        mean = self.actor(observations)
-        # compute standard deviation
+    # ======================================================================
+    # PPO 需要的标准接口
+    # ======================================================================
+    def update_distribution(self, observations: torch.Tensor) -> None:
+        feat = self._encode_actor_obs(observations)
+        mean = self.actor(feat)
         if self.noise_std_type == "scalar":
             std = self.std.expand_as(mean)
-        elif self.noise_std_type == "log":
-            std = torch.exp(self.log_std).expand_as(mean)
         else:
-            raise ValueError(f"Unknown standard deviation type: {self.noise_std_type}. Should be 'scalar' or 'log'")
-        # create distribution
+            std = torch.exp(self.log_std).expand_as(mean)
         self.distribution = Normal(mean, std)
 
-    def act(self, observations, **kwargs):
+    def act(self, observations: torch.Tensor, **kwargs) -> torch.Tensor:
         self.update_distribution(observations)
         return self.distribution.sample()
 
-    def get_actions_log_prob(self, actions):
+    def get_actions_log_prob(self, actions: torch.Tensor) -> torch.Tensor:
         return self.distribution.log_prob(actions).sum(dim=-1)
 
-    def act_inference(self, observations):
-        actions_mean = self.actor(observations)
-        return actions_mean
+    def act_inference(self, observations: torch.Tensor) -> torch.Tensor:
+        feat = self._encode_actor_obs(observations)
+        return self.actor(feat)
 
-    def evaluate(self, critic_observations, **kwargs):
-        value = self.critic(critic_observations)
-        return value
+    def evaluate(self, critic_observations: torch.Tensor, **kwargs) -> torch.Tensor:
+        return self.critic(critic_observations)
 
-    def load_state_dict(self, state_dict, strict=True):
-        """Load the parameters of the actor-critic model.
+    @property
+    def action_mean(self) -> torch.Tensor:
+        return self.distribution.mean
 
-        Args:
-            state_dict (dict): State dictionary of the model.
-            strict (bool): Whether to strictly enforce that the keys in state_dict match the keys returned by this
-                           module's state_dict() function.
+    @property
+    def action_std(self) -> torch.Tensor:
+        return self.distribution.stddev
 
-        Returns:
-            bool: Whether this training resumes a previous training. This flag is used by the `load()` function of
-                  `OnPolicyRunner` to determine how to load further parameters (relevant for, e.g., distillation).
-        """
+    @property
+    def entropy(self) -> torch.Tensor:
+        return self.distribution.entropy().sum(dim=-1)
 
+    def reset(self, dones=None):
+        return
+
+    def get_hidden_states(self):
+        return None, None
+
+    def set_hidden_states(self, *args, **kwargs):
+        return
+
+    def load_state_dict(self, state_dict, strict: bool = True):
         super().load_state_dict(state_dict, strict=strict)
         return True
