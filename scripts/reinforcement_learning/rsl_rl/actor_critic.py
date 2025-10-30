@@ -25,7 +25,7 @@ class ActorCritic(nn.Module):
         activation: str = "elu",
         init_noise_std: float = 1.0,
         noise_std_type: str = "scalar",
-        actor_state_dim: int | None = None,
+        actor_state_dim: int | None = None,  # devide state/sensor, None means all state
         **kwargs,
     ) -> None:
         if kwargs:
@@ -37,15 +37,10 @@ class ActorCritic(nn.Module):
         super().__init__()
         act = resolve_nn_activation(activation)
 
-        # ------------------------------------------------------------------
-        # 1) 处理“要不要拆分”
-        # ------------------------------------------------------------------
-        # 如果不给，就当作老版本：所有 actor obs 一起进一个 encoder
         if actor_state_dim is None:
             actor_state_dim = num_actor_obs
             actor_scan_dim = 0
         else:
-            # 用户给了“前多少维是状态”，那剩下的就是 scan / 高度 / ray
             actor_scan_dim = num_actor_obs - actor_state_dim
             if actor_scan_dim < 0:
                 raise ValueError(
@@ -58,21 +53,13 @@ class ActorCritic(nn.Module):
         self.actor_state_dim = actor_state_dim
         self.actor_scan_dim = actor_scan_dim
 
-        # ------------------------------------------------------------------
-        # 2) state/scan 各自的 encoder
-        # ------------------------------------------------------------------
-        # 用 actor_hidden_dims 的“第一层大小”做个参考，不然你得再传一组
+        # divide state/sensor
         first_actor_dim = actor_hidden_dims[0] if len(actor_hidden_dims) > 0 else 256
-
-        # state encoder：走一条比较粗的
         self.state_encoder = nn.Sequential(
             nn.Linear(actor_state_dim, first_actor_dim),
             act,
         )
-
-        # scan encoder：如果有的话，走一条稍微细一点的
         if actor_scan_dim > 0:
-            # 可以用一半的宽度
             scan_width = max(first_actor_dim // 2, 64)
             self.scan_encoder = nn.Sequential(
                 nn.Linear(actor_scan_dim, scan_width),
@@ -83,22 +70,19 @@ class ActorCritic(nn.Module):
             self.scan_encoder = None
             fused_dim = first_actor_dim
 
-        # ------------------------------------------------------------------
-        # 3) actor head：用用户给的 actor_hidden_dims 来堆后面的层
-        # ------------------------------------------------------------------
+        # add actor layers behind
         actor_layers: list[nn.Module] = []
         in_dim = fused_dim
         for i, h_dim in enumerate(actor_hidden_dims):
             actor_layers.append(nn.Linear(in_dim, h_dim))
             actor_layers.append(act)
             in_dim = h_dim
-        # 最后一层输出动作
+        
+        # output layer
         actor_layers.append(nn.Linear(in_dim, num_actions))
         self.actor = nn.Sequential(*actor_layers)
 
-        # ------------------------------------------------------------------
-        # 4) critic head：保持原来风格
-        # ------------------------------------------------------------------
+        # critic head
         critic_layers: list[nn.Module] = []
         in_dim = num_critic_obs
         for i, h_dim in enumerate(critic_hidden_dims):
@@ -108,9 +92,7 @@ class ActorCritic(nn.Module):
         critic_layers.append(nn.Linear(in_dim, 1))
         self.critic = nn.Sequential(*critic_layers)
 
-        # ------------------------------------------------------------------
-        # 5) 动作噪声
-        # ------------------------------------------------------------------
+        # action noise
         self.noise_std_type = noise_std_type
         if self.noise_std_type == "scalar":
             self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
@@ -137,10 +119,6 @@ class ActorCritic(nn.Module):
         #     print(f"[DEBUG] actor output shape:      {actor_out.shape}")
         #     print(f"[DEBUG] critic output shape:     {critic_out.shape}")
 
-
-    # ======================================================================
-    # 内部: 编码 actor 输入
-    # ======================================================================
     def _encode_actor_obs(self, obs: torch.Tensor) -> torch.Tensor:
         # obs: [B, num_actor_obs]
         state = obs[..., : self.actor_state_dim]
@@ -153,9 +131,6 @@ class ActorCritic(nn.Module):
             feat = state_feat
         return feat
 
-    # ======================================================================
-    # PPO 需要的标准接口
-    # ======================================================================
     def update_distribution(self, observations: torch.Tensor) -> None:
         feat = self._encode_actor_obs(observations)
         mean = self.actor(feat)
