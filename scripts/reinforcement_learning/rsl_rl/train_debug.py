@@ -29,7 +29,7 @@ sys.path.insert(0, ROOT)
 sys.argv = [
     "train.py",
     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
-    "--headless",
+    # "--headless",
     "--num_envs=512",
     "--max_iterations=10000",
 ]

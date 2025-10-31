@@ -1,0 +1,31 @@
+--- git status ---
+On branch master
+Your branch is up to date with 'master/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/reinforcement_learning/rsl_rl/train_debug.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	logs/rsl_rl/unitree_go2_rough/2025-10-31_20-17-12/
+	outputs/2025-10-31/20-17-11/
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/scripts/reinforcement_learning/rsl_rl/train_debug.py b/scripts/reinforcement_learning/rsl_rl/train_debug.py
+index 15f1582..8aba792 100644
+--- a/scripts/reinforcement_learning/rsl_rl/train_debug.py
++++ b/scripts/reinforcement_learning/rsl_rl/train_debug.py
+@@ -29,7 +29,7 @@ sys.path.insert(0, ROOT)
+ sys.argv = [
+     "train.py",
+     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
+-    "--headless",
++    # "--headless",
+     "--num_envs=512",
+     "--max_iterations=10000",
+ ]

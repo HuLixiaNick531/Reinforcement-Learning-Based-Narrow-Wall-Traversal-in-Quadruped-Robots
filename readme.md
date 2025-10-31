@@ -19,7 +19,7 @@
 - Clone this repository separately from the Isaac Lab installation (i.e. outside the `IsaacLab` directory):
 
   ```bash
-  git clone 
+  git clone https://github.com/HuLixiaNick531/Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots.git
   ```
 
 - Using a python interpreter that has Isaac Lab installed, install the library
