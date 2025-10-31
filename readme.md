@@ -63,89 +63,11 @@ To enable your extension, follow these steps:
 
 </details>
 
-## Docker setup
 
-<details>
 
-<summary>Click to expand</summary>
+## Train examples
 
-### Building Isaac Lab Base Image
-
-Currently, we don't have the Docker for Isaac Lab publicly available. Hence, you'd need to build the docker image
-for Isaac Lab locally by following the steps [here](https://isaac-sim.github.io/IsaacLab/main/source/deployment/index.html).
-
-Once you have built the base Isaac Lab image, you can check it exists by doing:
-
-```bash
-docker images
-
-# Output should look something like:
-#
-# REPOSITORY                       TAG       IMAGE ID       CREATED          SIZE
-# isaac-lab-base                   latest    28be62af627e   32 minutes ago   18.9GB
-```
-
-### Building robot_lab Image
-
-Following above, you can build the docker container for this project. It is called `robot-lab`. However,
-you can modify this name inside the [`docker/docker-compose.yaml`](docker/docker-compose.yaml).
-
-```bash
-cd docker
-docker compose --env-file .env.base --file docker-compose.yaml build robot-lab
-```
-
-You can verify the image is built successfully using the same command as earlier:
-
-```bash
-docker images
-
-# Output should look something like:
-#
-# REPOSITORY                       TAG       IMAGE ID       CREATED             SIZE
-# robot-lab                        latest    00b00b647e1b   2 minutes ago       18.9GB
-# isaac-lab-base                   latest    892938acb55c   About an hour ago   18.9GB
-```
-
-### Running the container
-
-After building, the usual next step is to start the containers associated with your services. You can do this with:
-
-```bash
-docker compose --env-file .env.base --file docker-compose.yaml up
-```
-
-This will start the services defined in your `docker-compose.yaml` file, including robot-lab.
-
-If you want to run it in detached mode (in the background), use:
-
-```bash
-docker compose --env-file .env.base --file docker-compose.yaml up -d
-```
-
-### Interacting with a running container
-
-If you want to run commands inside the running container, you can use the `exec` command:
-
-```bash
-docker exec --interactive --tty -e DISPLAY=${DISPLAY} robot-lab /bin/bash
-```
-
-### Shutting down the container
-
-When you are done or want to stop the running containers, you can bring down the services:
-
-```bash
-docker compose --env-file .env.base --file docker-compose.yaml down
-```
-
-This stops and removes the containers, but keeps the images.
-
-</details>
-
-## Try examples
-
-You can use the following commands to run all environments:
+You can use the following commands to run all environments, you can chage the training configuration through train_debug.py:
 
 RSL-RL:
 
