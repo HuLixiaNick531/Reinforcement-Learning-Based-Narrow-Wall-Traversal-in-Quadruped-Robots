@@ -25,6 +25,7 @@
 - Using a python interpreter that has Isaac Lab installed, install the library
 
   ```bash
+  cd unitree_gym
   python -m pip install -e source/unitree_gym
   ```
 
@@ -73,4 +74,5 @@ RSL-RL:
 
 ```bash
 # Train
+cd unitree_gym
 python scripts/reinforcement_learning/rsl_rl/train_debug.py
