@@ -25,7 +25,7 @@
 - Using a python interpreter that has Isaac Lab installed, install the library
 
   ```bash
-  cd unitree_gym
+  cd Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots
   python -m pip install -e source/unitree_gym
   ```
 
