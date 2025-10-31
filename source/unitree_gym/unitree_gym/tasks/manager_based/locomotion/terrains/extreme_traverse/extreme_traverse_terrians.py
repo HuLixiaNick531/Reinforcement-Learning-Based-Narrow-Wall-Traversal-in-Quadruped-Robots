@@ -69,7 +69,7 @@ def two_walls_terrain(
     cfg, 
     num_goals: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """单段双墙走廊地形（风格与 parkour_hurdle_terrain 一致）"""
+    """单段双墙走廊地形"""
 
     # ------------------------ 基本分辨率设置 ------------------------
     hs = cfg.horizontal_scale

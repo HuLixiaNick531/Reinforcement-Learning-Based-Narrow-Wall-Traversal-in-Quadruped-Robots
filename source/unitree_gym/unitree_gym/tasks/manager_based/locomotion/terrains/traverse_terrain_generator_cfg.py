@@ -20,6 +20,6 @@ class TraverseSubTerrainBaseCfg(HfTerrainBaseCfg):
     
 @configclass
 class TraverseTerrainGeneratorCfg(TerrainGeneratorCfg):
-    num_goals: int = 8 
+    num_goals: int = 3
     terrain_names: list[str] = [] 
     random_difficulty: bool = False 
