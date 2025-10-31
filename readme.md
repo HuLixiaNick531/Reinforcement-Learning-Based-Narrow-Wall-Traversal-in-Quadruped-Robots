@@ -151,4 +151,4 @@ RSL-RL:
 
 ```bash
 # Train
-python scripts/reinforcement_learning/rsl_rl/traing_debug.py
+python scripts/reinforcement_learning/rsl_rl/train_debug.py
