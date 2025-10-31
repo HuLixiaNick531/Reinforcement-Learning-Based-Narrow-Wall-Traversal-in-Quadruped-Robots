@@ -74,5 +74,5 @@ RSL-RL:
 
 ```bash
 # Train
-cd unitree_gym
+cd Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots
 python scripts/reinforcement_learning/rsl_rl/train_debug.py
