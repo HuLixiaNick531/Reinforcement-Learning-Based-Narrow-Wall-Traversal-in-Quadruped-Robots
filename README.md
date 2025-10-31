@@ -21,9 +21,10 @@ It integrates **Isaac Sim**, **Isaac Lab**, and **RSL-RL** for parallel simulati
 
 3. Download Isaac Lab (Recommanded [release/2.2.0](https://github.com/isaac-sim/IsaacLab/tree/release/2.2.0)) ;
 
-4. Clone the repo.
+4. Clone the repo and switch to 'main' branch.
 ```bash
 git clone https://github.com/HuLixiaNick531/Reinforcement-Learning-Based-Narrow-Wall-Traversal-in-Quadruped-Robots.git
+git checkout main
 ```
 
 5. change the working directory and update params in 'vars.sh'.
