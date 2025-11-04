@@ -132,9 +132,7 @@ class PPOWithExtractor(PPO):
         ).contiguous()
 
         return actions
-
-    
-
+ 
     def update(self):  # noqa: C901
         mean_value_loss = 0
         mean_surrogate_loss = 0

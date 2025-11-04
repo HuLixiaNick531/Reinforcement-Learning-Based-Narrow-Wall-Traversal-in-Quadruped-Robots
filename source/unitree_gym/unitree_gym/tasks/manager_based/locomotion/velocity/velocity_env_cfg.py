@@ -177,22 +177,22 @@ class ObservationsCfg:
         )
     policy: PolicyCfg = PolicyCfg()
 
-    @configclass
-    class CriticCfg(ObsGroup):
-        """Observations for policy group."""
-        # observation terms (order preserved)
-        critic_traverse_observations = ObsTerm(
-            func=observations.CriticTraverseObservations,
-            params={            
-            "asset_cfg":SceneEntityCfg("robot"),
-            "sensor_cfg":SceneEntityCfg("contact_forces", body_names=".*_foot"),
-            "traverse_name":'base_traverse',
-            "history_length": 10
-            },
-            clip= (-100,100)
-        )
-    # observation groups
-    critic: CriticCfg = CriticCfg()
+    # @configclass
+    # class CriticCfg(ObsGroup):
+    #     """Observations for policy group."""
+    #     # observation terms (order preserved)
+    #     critic_traverse_observations = ObsTerm(
+    #         func=observations.CriticTraverseObservations,
+    #         params={            
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #         "sensor_cfg":SceneEntityCfg("contact_forces", body_names=".*_foot"),
+    #         "traverse_name":'base_traverse',
+    #         "history_length": 10
+    #         },
+    #         clip= (-100,100)
+    #     )
+    # # observation groups
+    # critic: CriticCfg = CriticCfg()
 
 
 @configclass

@@ -1,0 +1,7 @@
+# Local experiment artifacts
+logs/
+outputs/
+
+# Python cache artifacts
+__pycache__/
+*.pyc
