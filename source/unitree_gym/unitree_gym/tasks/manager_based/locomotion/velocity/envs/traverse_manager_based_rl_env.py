@@ -15,12 +15,14 @@ from isaaclab.managers import CommandManager, CurriculumManager, TerminationMana
 from isaaclab.envs.common import VecEnvStepReturn
 from collections.abc import Sequence
 from typing import Any, ClassVar
-import math, torch   
-import numpy as np 
+import math
+import torch
+import numpy as np
 from ..managers.traverse_reward_manager import TraverseRewardManager
 
+
 class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
-    is_vector_env: ClassVar[bool] = True 
+    is_vector_env: ClassVar[bool] = True
     metadata: ClassVar[dict[str, Any]] = {
         "render_modes": [None, "human", "rgb_array"],
         "isaac_sim_version": get_version(),
@@ -42,7 +44,7 @@ class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
         # note: this order is important since observation manager needs to know the command and action managers
         # and the reward manager needs to know the termination manager
         self.episode_length_buf = torch.zeros(self.num_envs, device=self.device, dtype=torch.long)
-        
+
         # -- command manager
 
         self.command_manager: CommandManager = CommandManager(self.cfg.commands, self)
@@ -91,7 +93,7 @@ class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
     def max_episode_length(self) -> int:
         """Maximum episode length in environment steps."""
         return math.ceil(self.max_episode_length_s / self.step_dt)
-    
+
     def step(self, action: torch.Tensor) -> VecEnvStepReturn:
         # process actions
         self.action_manager.process_action(action.to(self.device))
@@ -113,7 +115,7 @@ class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
             if self._sim_step_counter % self.cfg.sim.render_interval == 0 and is_rendering:
                 self.sim.render()
             self.scene.update(dt=self.physics_dt)
-        
+
         self.traverse_manager.compute(dt=self.step_dt)
         # post-step:
         # -- update env counters (used for curriculum generation)
@@ -127,14 +129,14 @@ class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
         # -- reward computation
         reset_env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
         self.reward_buf = self.reward_manager.compute(dt=self.step_dt)
-        
+
         if len(self.recorder_manager.active_terms) > 0:
             # update observations for recording if needed
             self.obs_buf = self.observation_manager.compute()
             self.recorder_manager.record_post_step()
 
         # -- reset envs that terminated/timed-out and log the episode information
-        
+
         if len(reset_env_ids) > 0:
             # trigger recorder terms for pre-reset calls
             self.recorder_manager.record_pre_reset(reset_env_ids)
@@ -151,7 +153,7 @@ class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
             # trigger recorder terms for post-reset calls
             self.recorder_manager.record_post_reset(reset_env_ids)
         self.command_manager.compute(dt=self.step_dt)
-        self.traverse_manager() ##Just calling traverse mananger for using '_gather_cur_goal' attribute 
+        self.traverse_manager()  # Just calling traverse mananger for using '_gather_cur_goal' attribute 
 
         # -- update command
         # -- step interval events
@@ -163,7 +165,6 @@ class TraverseManagerBasedRLEnv(TraverseManagerBasedEnv, gym.Env):
 
         # return observations, rewards, resets and extras
         return self.obs_buf, self.reward_buf, self.reset_terminated, self.reset_time_outs, self.extras
-
 
     def render(self, recompute: bool = False) -> np.ndarray | None:
         # run a rendering step of the simulator

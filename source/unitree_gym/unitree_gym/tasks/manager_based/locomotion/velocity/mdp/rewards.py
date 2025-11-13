@@ -23,7 +23,7 @@ class reward_feet_edge(ManagerTermBase):
         self.asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
         self.sensor_cfg = cfg.params["sensor_cfg"]
         self.asset_cfg = cfg.params["asset_cfg"]
-        self.traverse_event: TraverseEvent =  env.traverse_manager.get_term(cfg.params["traverse_name"])
+        self.traverse_event: TraverseEvent = env.traverse_manager.get_term(cfg.params["traverse_name"])
         self.body_id = self.contact_sensor.find_bodies('base')[0]
         self.horizontal_scale = env.scene.terrain.cfg.terrain_generator.horizontal_scale
         size_x, size_y = env.scene.terrain.cfg.terrain_generator.size
