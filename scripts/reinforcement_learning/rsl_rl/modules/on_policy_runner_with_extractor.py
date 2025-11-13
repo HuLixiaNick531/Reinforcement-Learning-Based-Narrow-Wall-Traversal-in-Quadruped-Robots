@@ -18,10 +18,12 @@ from rsl_rl.runners.on_policy_runner import OnPolicyRunner
 from .feature_extractors import DefaultEstimator
 from .ppo_with_extractor import PPOWithExtractor 
 from .distillation_with_extractor import DistillationWithExtractor 
-from copy import copy 
-import warnings 
+from copy import copy
+import warnings
+
 
 from tensordict import TensorDict
+
 
 class OnPolicyRunnerWithExtractor(OnPolicyRunner):
     def __init__(self, env: VecEnv, train_cfg: dict, log_dir: str | None = None, device="cpu"):

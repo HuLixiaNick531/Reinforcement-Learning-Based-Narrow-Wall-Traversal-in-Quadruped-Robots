@@ -36,7 +36,7 @@ class CriticTraverseObservations(ManagerTermBase):
         self.sensor_cfg = cfg.params["sensor_cfg"]
         self.asset_cfg = cfg.params["asset_cfg"]
         self.history_length = cfg.params['history_length']
-        self._obs_history_buffer = torch.zeros(self.num_envs, self.history_length, 3 + 2 + 3 + 4 + 36 + 5, device=self.device)
+        self._obs_history_buffer = torch.zeros(self.num_envs, self.history_length, 3 + 2 + 3 + 4 + 36 + 6, device=self.device)
         self.delta_yaw = torch.zeros(self.num_envs, device=self.device)
         self.delta_next_yaw = torch.zeros(self.num_envs, device=self.device)
         self.measured_heights = torch.zeros(self.num_envs, 132, device=self.device)
@@ -151,7 +151,7 @@ class TraversePolicyObservations(ManagerTermBase):
         self.sensor_cfg = cfg.params["sensor_cfg"]
         self.asset_cfg = cfg.params["asset_cfg"]
         self.history_length = cfg.params['history_length']
-        self._obs_history_buffer = torch.zeros(self.num_envs, self.history_length, 3 + 2 + 3 + 4 + 36 + 5, device=self.device)
+        self._obs_history_buffer = torch.zeros(self.num_envs, self.history_length, 3 + 2 + 3 + 4 + 36 + 6, device=self.device)
         self.delta_yaw = torch.zeros(self.num_envs, device=self.device)
         self.delta_next_yaw = torch.zeros(self.num_envs, device=self.device)
         self.measured_heights = torch.zeros(self.num_envs, 132, device=self.device)
@@ -186,15 +186,16 @@ class TraversePolicyObservations(ManagerTermBase):
         commands = env.command_manager.get_command('base_velocity')
 
         obs_buf = torch.cat((
-            self.asset.data.root_ang_vel_b * 0.25,    # 3
-            imu_obs,                                  # 2
-            0*self.delta_yaw[:, None],                # 1  ← 保留占位
-            self.delta_yaw[:, None],                  # 1
-            self.delta_next_yaw[:, None],             # 1
-            0*commands[:, 0:2],                       # 2  ← 保留占位
-            commands[:, 0:1],                         # 1
-            env_idx_tensor,                           # 1
-            invert_env_idx_tensor,                    # 1
+                                    self.asset.data.root_ang_vel_b * 0.25,    # 3
+                                    imu_obs,                                  # 2
+                                    0*self.delta_yaw[:, None],                # 1  ← 保留占位
+                                    self.delta_yaw[:, None],                  # 1
+                                    self.delta_next_yaw[:, None],             # 1
+                                    0*commands[:, 0:2],                       # 2  ← 保留占位
+                                    commands[:, 0:1],                         # 1
+                                    self.traverse_event.mode_flag[:, None],   # 1
+                                    env_idx_tensor,                           # 1
+                                    invert_env_idx_tensor,                    # 1
             self.asset.data.joint_pos - self.asset.data.default_joint_pos,  # 12
             self.asset.data.joint_vel * 0.05,         # 12
             env.action_manager.get_term('joint_pos').action_history_buf[:, -1],  # 12

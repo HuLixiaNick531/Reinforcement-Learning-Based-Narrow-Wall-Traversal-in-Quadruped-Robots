@@ -74,7 +74,7 @@ def two_walls_terrain(
     # ------------------------ 基本分辨率设置 ------------------------
     hs = cfg.horizontal_scale
     vs = cfg.vertical_scale
-    width_pixels  = int(cfg.size[0] / hs)
+    width_pixels = int(cfg.size[0] / hs)
     length_pixels = int(cfg.size[1] / hs)
     mid_y = length_pixels // 2
 

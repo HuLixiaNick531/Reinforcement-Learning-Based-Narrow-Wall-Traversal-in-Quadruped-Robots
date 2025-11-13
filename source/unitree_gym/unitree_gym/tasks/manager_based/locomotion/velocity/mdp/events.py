@@ -235,12 +235,12 @@ class randomize_rigid_body_material(ManagerTermBase):
 
         # obtain parameters for sampling friction and restitution values
         friction_range = cfg.params.get("friction_range", (1.0, 1.0))
-        restitution_range = cfg.params.get("restitution_range", (0.,0.))
+        restitution_range = cfg.params.get("restitution_range", (0., 0.))
         num_buckets = int(cfg.params.get("num_buckets", 1))
-        range_list = [friction_range, (0,0), restitution_range]
+        range_list = [friction_range, (0, 0), restitution_range]
         ranges = torch.tensor(range_list, device="cpu")
         self.material_buckets = math_utils.sample_uniform(ranges[:, 0], ranges[:, 1], (num_buckets, 3), device="cpu")
-        self.material_buckets[:,1] = self.material_buckets[:,0]
+        self.material_buckets[:, 1] = self.material_buckets[:, 0]
 
     def __call__(
         self,

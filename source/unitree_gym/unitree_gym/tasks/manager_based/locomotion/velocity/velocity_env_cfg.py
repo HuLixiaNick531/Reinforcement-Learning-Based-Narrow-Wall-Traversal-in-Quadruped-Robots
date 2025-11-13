@@ -60,13 +60,13 @@ class MySceneGo2Cfg(InteractiveSceneCfg):
         prim_path="/World/ground",
         terrain_type="generator",
         terrain_generator=TRAVERSE_TERRAINS_CFG,
-        max_init_terrain_level=5,
+        max_init_terrain_level=None,
         collision_group=-1,
         physics_material=sim_utils.RigidBodyMaterialCfg(
             friction_combine_mode="multiply",
             restitution_combine_mode="multiply",
-            static_friction=1.0,
-            dynamic_friction=1.0,
+            static_friction=2.0,
+            dynamic_friction=2.0,
             restitution=1.0,
         ),
         visual_material=sim_utils.MdlFileCfg(

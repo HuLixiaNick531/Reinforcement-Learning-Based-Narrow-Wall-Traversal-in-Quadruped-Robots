@@ -41,10 +41,11 @@ class TraverseEvent(TraverseTerm):
         self.metrics["how_far_from_start_point"] = torch.zeros(self.num_envs, device='cpu')
         self.metrics["terrain_levels"] = torch.zeros(self.num_envs, device='cpu')
         self.metrics["current_goal_idx"] = torch.zeros(self.num_envs, device='cpu')
+        self.mode_flag = torch.zeros(self.num_envs, dtype=torch.float, device=self.device)
         self.dis_to_start_pos = torch.zeros(self.num_envs, device=self.device)
         self.terrain: TraverseTerrainImporter = self.env.scene.terrain
         terrain_generator: TraverseTerrainGenerator = self.terrain.terrain_generator_class
-        Traverse_terrain_cfg :TraverseTerrainGeneratorCfg = self.terrain.cfg.terrain_generator
+        Traverse_terrain_cfg: TraverseTerrainGeneratorCfg = self.terrain.cfg.terrain_generator
         self.num_goals = Traverse_terrain_cfg.num_goals
         self.env_class = torch.zeros(self.num_envs, device=self.device)
         self.env_origins = self.terrain.env_origins
@@ -102,7 +103,7 @@ class TraverseEvent(TraverseTerm):
         """Re-target the current goal position to the current root state."""
         next_flag = self.reach_goal_timer > self.reach_goal_delay / self.simulation_time
         if self.debug_vis:
-            tmp_mask = torch.nonzero(self.cur_goal_idx>0).squeeze(-1)
+            tmp_mask = torch.nonzero(self.cur_goal_idx > 0).squeeze(-1)
             if tmp_mask.numel() > 0:
                 self.future_goal_idx[tmp_mask, self.cur_goal_idx[tmp_mask]] = False
         self.cur_goal_idx[next_flag] += 1
@@ -124,17 +125,17 @@ class TraverseEvent(TraverseTerm):
         self.next_target_yaw = torch.atan2(target_vec_norm[:, 1], target_vec_norm[:, 0])
         self.cur_goals = self._gather_cur_goals()
         self.next_goals = self._gather_cur_goals(future=1)
-        start_pos = self.env_origins[:,:2] - \
+        start_pos = self.env_origins[:, :2] - \
                     torch.tensor((self.terrain.cfg.terrain_generator.size[1] + \
                                   self._reset_offset, 0)).to(self.device)
 
         self.dis_to_start_pos = torch.norm(start_pos - self.robot.data.root_pos_w[:, :2], dim=1)
 
     def _resample_command(self, env_ids: Sequence[int]):
-        ## we are use reset_root_state events for initalize robot position in a subterrain
-        ## original robot root init position is (0,0) in the subterrain axis, so we subtracted off from current robot position 
+        # we are use reset_root_state events for initalize robot position in a subterrain
+        # original robot root init position is (0,0) in the subterrain axis, so we subtracted off from current robot position 
 
-        start_pos = self.env_origins[env_ids,:2] - \
+        start_pos = self.env_origins[env_ids, :2] - \
                     torch.tensor((self.terrain.cfg.terrain_generator.size[1] + \
                                   self._reset_offset, 0)).to(self.device)
 
@@ -184,9 +185,16 @@ class TraverseEvent(TraverseTerm):
         # logs data
         self.metrics["terrain_levels"] = (self.terrain.terrain_levels.float()).to(device = 'cpu')
         robot_root_pos_w = self.robot.data.root_pos_w[:, :2] - self.env_origins[:, :2]
-        self.metrics["far_from_current_goal"] = (torch.norm(self.cur_goals[:, :2] - robot_root_pos_w,dim =-1) - self.next_goal_threshold).to(device = 'cpu')
+        dist_to_goal = torch.norm(self.cur_goals[:, :2] - robot_root_pos_w, dim=-1)
+        self.metrics["far_from_current_goal"] = (dist_to_goal - self.next_goal_threshold).to(device = 'cpu')
         self.metrics["current_goal_idx"] = self.cur_goal_idx.to(device='cpu', dtype=float)
         self.metrics["how_far_from_start_point"] = self.dis_to_start_pos.to(device = 'cpu')
+        go_to_wall_phase = self.cur_goal_idx == 0
+        self.mode_flag = torch.where(
+            go_to_wall_phase,
+            (dist_to_goal > self.next_goal_threshold).float(),
+            torch.zeros_like(dist_to_goal)
+        )
         
     def _set_debug_vis_impl(self, debug_vis: bool):
         # create markers if necessary for the first tome
