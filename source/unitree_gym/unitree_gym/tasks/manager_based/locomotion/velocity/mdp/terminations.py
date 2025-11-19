@@ -18,9 +18,10 @@ from isaaclab.assets import Articulation
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.utils.math import euler_xyz_from_quat, wrap_to_pi
 from ..mdp import TraverseEvent
- 
+
 if TYPE_CHECKING:
     from ..envs import TraverseManagerBasedRLEnv
+
 
 def terminate_episode(
     env: TraverseManagerBasedRLEnv,
@@ -29,12 +30,14 @@ def terminate_episode(
     reset_buf = torch.zeros((env.num_envs, ), dtype=torch.bool, device=env.device)
     asset: Articulation = env.scene[asset_cfg.name]
     roll, pitch, _ = euler_xyz_from_quat(asset.data.root_state_w[:,3:7])
-    roll_cutoff = torch.abs(wrap_to_pi(roll)) > 1.5
-    pitch_cutoff = torch.abs(wrap_to_pi(pitch)) > 1.5
+    # tighten attitude thresholds so impending falls end the episode sooner
+    roll_cutoff = torch.abs(wrap_to_pi(roll)) > 0.7
+    pitch_cutoff = torch.abs(wrap_to_pi(pitch)) > 0.7
     time_out_buf = env.episode_length_buf >= env.max_episode_length
     traverse_event: TraverseEvent =  env.traverse_manager.get_term('base_traverse')    
     reach_goal_cutoff = traverse_event.cur_goal_idx >= env.scene.terrain.cfg.terrain_generator.num_goals
-    height_cutoff = asset.data.root_state_w[:, 2] < -0.25
+    # treat base heights close to ground as failure to prevent crawling
+    height_cutoff = asset.data.root_state_w[:, 2] < 0.15
     time_out_buf |= reach_goal_cutoff
     reset_buf |= time_out_buf
     reset_buf |= roll_cutoff

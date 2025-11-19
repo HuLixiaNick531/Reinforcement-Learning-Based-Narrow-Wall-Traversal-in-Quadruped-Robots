@@ -142,11 +142,17 @@ class TraverseEvent(TraverseTerm):
         self.dis_to_start_pos = torch.norm(start_pos - self.robot.data.root_pos_w[env_ids, :2], dim=1)
 
         robot_root_pos_w = self.robot.data.root_pos_w[:, :2] - self.env_origins[:, :2]
-        # uniformly resample terrain levels for the selected envs to keep distribution even
+        # uniformly resample terrain rows/cols for the selected envs to keep distribution even
         self.terrain.terrain_levels[env_ids] = torch.randint(
             0, self.terrain.max_terrain_level, (len(env_ids),), device=self.device
         )
-        self.env_origins[env_ids] = self.terrain.terrain_origins[self.terrain.terrain_levels[env_ids], self.terrain.terrain_types[env_ids]]
+        num_cols = self.terrain.terrain_origins.shape[1]
+        self.terrain.terrain_types[env_ids] = torch.randint(
+            0, num_cols, (len(env_ids),), device=self.device
+        )
+        self.env_origins[env_ids] = self.terrain.terrain_origins[
+            self.terrain.terrain_levels[env_ids], self.terrain.terrain_types[env_ids]
+        ]
         self.env_class[env_ids] = self.terrain_class[self.terrain.terrain_levels[env_ids], self.terrain.terrain_types[env_ids]]
         
         temp = self.terrain_goals[self.terrain.terrain_levels, self.terrain.terrain_types]

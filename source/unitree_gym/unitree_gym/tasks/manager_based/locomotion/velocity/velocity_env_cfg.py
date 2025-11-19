@@ -280,17 +280,17 @@ class EventCfg:
 class RewardsCfg:
     """Reward terms for the MDP."""
 
-# Available Body strings: 
+# Available Body strings:
     reward_collision = RewTerm(
         func=rewards.reward_collision, 
-        weight=-10.0, 
+        weight=-10.0,
         params={
             "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
         },
     )
     # reward_feet_edge = RewTerm(
     #     func=rewards.reward_feet_edge, 
-    #     weight=-1.0, 
+    #     weight=-1.0,
     #     params={
     #         "asset_cfg":SceneEntityCfg(name="robot", body_names=["FL_foot","FR_foot","RL_foot","RR_foot"]),
     #         "sensor_cfg":SceneEntityCfg(name="contact_forces", body_names=".*_foot"),
@@ -299,99 +299,99 @@ class RewardsCfg:
     # )
     reward_torques = RewTerm(
         func=rewards.reward_torques, 
-        weight=-0.00001, 
+        weight=-0.00001,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
+            "asset_cfg": SceneEntityCfg("robot"),
         },
     )
     reward_dof_error = RewTerm(
         func=rewards.reward_dof_error, 
-        weight=-0.04, 
+        weight=-0.04,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
+            "asset_cfg": SceneEntityCfg("robot"),
         },
     )
     reward_hip_pos = RewTerm(
         func=rewards.reward_hip_pos, 
-        weight=-0.5, 
+        weight=-0.5,
         params={
-            "asset_cfg":SceneEntityCfg("robot", joint_names=".*_hip_joint"),
+            "asset_cfg": SceneEntityCfg("robot", joint_names=".*_hip_joint"),
         },
     )
     reward_ang_vel_xy = RewTerm(
         func=rewards.reward_ang_vel_xy, 
-        weight=-0.5, 
+        weight=-0.5,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
+            "asset_cfg": SceneEntityCfg("robot"),
         },
     )
     reward_action_rate = RewTerm(
         func=rewards.reward_action_rate, 
-        weight=-0.1, 
+        weight=-0.1,
         params={
-          "asset_cfg":SceneEntityCfg("robot"),
+          "asset_cfg": SceneEntityCfg("robot"),
         },
     )
     reward_dof_acc = RewTerm(
         func=rewards.reward_dof_acc, 
-        weight=-2.5e-7, 
+        weight=-2.5e-7,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
+            "asset_cfg": SceneEntityCfg("robot"),
         },
     )
     reward_lin_vel_z = RewTerm(
         func=rewards.reward_lin_vel_z, 
-        weight=-1.0, 
+        weight=-1.0,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
-            "traverse_name":'base_traverse',
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": 'base_traverse',
         },
     )
     reward_orientation = RewTerm(
         func=rewards.reward_orientation, 
-        weight=-5.0, 
+        weight=-10.0,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
-            "traverse_name":'base_traverse',
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": 'base_traverse',
         },
     )
-    reward_base_height = RewTerm(
-        func=rewards.reward_base_height,
-        weight=-2.0,
-        params={
-            "asset_cfg":SceneEntityCfg("robot"),
-            "target_height":0.27,
-            "falloff":0.06,
-        },
-    )
+    # reward_base_height = RewTerm(
+    #     func=rewards.reward_base_height,
+    #     weight=-2.0,
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #         "target_height":0.27,
+    #         "falloff":0.06,
+    #     },
+    # )
     reward_feet_stumble = RewTerm(
         func=rewards.reward_feet_stumble, 
-        weight=-1.0, 
+        weight=-1.0,
         params={
-            "sensor_cfg":SceneEntityCfg("contact_forces", body_names=".*_foot"),
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
         },
     )
     reward_tracking_goal_vel = RewTerm(
         func=rewards.reward_tracking_goal_vel, 
-        weight=3.5, 
+        weight=2.0,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
-            "traverse_name":'base_traverse'
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": 'base_traverse'
         },
     )
     reward_tracking_yaw = RewTerm(
         func=rewards.reward_tracking_yaw, 
-        weight=0.5, 
+        weight=0.5,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
-            "traverse_name":'base_traverse'
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": 'base_traverse'
         },
     )
     reward_delta_torques = RewTerm(
         func=rewards.reward_delta_torques, 
-        weight=-1.0e-7, 
+        weight=-1.0e-7,
         params={
-            "asset_cfg":SceneEntityCfg("robot"),
+            "asset_cfg": SceneEntityCfg("robot"),
         },
     )
 
@@ -404,8 +404,8 @@ class TerminationsCfg:
     total_terminates = DoneTerm(
         func=terminations.terminate_episode, 
         time_out=True,
-        params= {
-            "asset_cfg":SceneEntityCfg("robot")
+        params={
+            "asset_cfg": SceneEntityCfg("robot")
         },
     )
 
