@@ -149,12 +149,8 @@ def reward_orientation(
     traverse_name:str, 
     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
     ) -> torch.Tensor: 
-    traverse_event: TraverseEvent =  env.traverse_manager.get_term(traverse_name)
-    terrain_names = traverse_event.env_per_terrain_name
     asset: Articulation = env.scene[asset_cfg.name]
-    rew = torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
-    rew[(terrain_names !='traverse_flat')[:,-1]] = 0.
-    return rew
+    return torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
 
 def reward_feet_stumble(
     env: TraverseManagerBasedRLEnv,        
@@ -179,7 +175,13 @@ def reward_tracking_goal_vel(
     proj_vel = torch.sum(target_vel * cur_vel, dim=-1)
     command_vel = env.command_manager.get_command('base_velocity')[:, 0]
     rew_move = torch.minimum(proj_vel, command_vel) / (command_vel + 1e-5)
-    return rew_move
+
+    # gate the reward if the base posture is unstable or too low
+    tilt = torch.norm(asset.data.projected_gravity_b[:, :2], dim=1)
+    tilt_gate = torch.clamp(1.0 - (tilt - 0.35) / 0.25, min=0.0, max=1.0)
+    base_height = asset.data.root_pos_w[:, 2]
+    height_gate = torch.clamp((base_height - 0.18) / 0.08, min=0.0, max=1.0)
+    return rew_move * tilt_gate * height_gate
 
 def reward_tracking_yaw(     
     env: TraverseManagerBasedRLEnv, 
@@ -192,6 +194,17 @@ def reward_tracking_yaw(
     yaw = torch.atan2(2*(q[:,0]*q[:,3] + q[:,1]*q[:,2]),
                     1 - 2*(q[:,2]**2 + q[:,3]**2))
     return torch.exp(-torch.abs((traverse_event.target_yaw - yaw)))
+
+def reward_base_height(
+    env: TraverseManagerBasedRLEnv,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+    target_height: float = 0.27,
+    falloff: float = 0.06,
+    ) -> torch.Tensor:
+    asset: Articulation = env.scene[asset_cfg.name]
+    base_height = asset.data.root_pos_w[:, 2]
+    height_error = torch.clamp(target_height - base_height, min=0.0)
+    return height_error / (falloff + 1e-5)
 
 class reward_delta_torques(ManagerTermBase):
     def __init__(self, cfg: RewardTermCfg, env: TraverseManagerBasedRLEnv):

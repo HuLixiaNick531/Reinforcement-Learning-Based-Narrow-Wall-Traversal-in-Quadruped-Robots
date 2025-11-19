@@ -140,16 +140,12 @@ class TraverseEvent(TraverseTerm):
                                   self._reset_offset, 0)).to(self.device)
 
         self.dis_to_start_pos = torch.norm(start_pos - self.robot.data.root_pos_w[env_ids, :2], dim=1)
-        threshold = self.env.command_manager.get_command("base_velocity")[env_ids, 0] * self.episode_length_s
-        move_up = self.dis_to_start_pos > 0.8*threshold
-        move_down = self.dis_to_start_pos < 0.4*threshold
 
         robot_root_pos_w = self.robot.data.root_pos_w[:, :2] - self.env_origins[:, :2]
-        self.terrain.terrain_levels[env_ids] += 1 * move_up - 1 * move_down
-        # # Robots that solve the last level are sent to a random one
-        self.terrain.terrain_levels[env_ids] = torch.where(self.terrain.terrain_levels[env_ids]>=self.terrain.max_terrain_level,
-                                                   torch.randint_like(self.terrain.terrain_levels[env_ids], self.terrain.max_terrain_level),
-                                                   torch.clip(self.terrain.terrain_levels[env_ids], 0)) # (the minumum level is zero)
+        # uniformly resample terrain levels for the selected envs to keep distribution even
+        self.terrain.terrain_levels[env_ids] = torch.randint(
+            0, self.terrain.max_terrain_level, (len(env_ids),), device=self.device
+        )
         self.env_origins[env_ids] = self.terrain.terrain_origins[self.terrain.terrain_levels[env_ids], self.terrain.terrain_types[env_ids]]
         self.env_class[env_ids] = self.terrain_class[self.terrain.terrain_levels[env_ids], self.terrain.terrain_types[env_ids]]
         
@@ -183,19 +179,21 @@ class TraverseEvent(TraverseTerm):
 
     def _update_metrics(self):
         # logs data
-        self.metrics["terrain_levels"] = (self.terrain.terrain_levels.float()).to(device = 'cpu')
+        self.metrics["terrain_levels"] = (self.terrain.terrain_levels.float()).to(device='cpu')
         robot_root_pos_w = self.robot.data.root_pos_w[:, :2] - self.env_origins[:, :2]
         dist_to_goal = torch.norm(self.cur_goals[:, :2] - robot_root_pos_w, dim=-1)
-        self.metrics["far_from_current_goal"] = (dist_to_goal - self.next_goal_threshold).to(device = 'cpu')
+        self.metrics["far_from_current_goal"] = (dist_to_goal - self.next_goal_threshold).to(device='cpu')
         self.metrics["current_goal_idx"] = self.cur_goal_idx.to(device='cpu', dtype=float)
-        self.metrics["how_far_from_start_point"] = self.dis_to_start_pos.to(device = 'cpu')
-        go_to_wall_phase = self.cur_goal_idx == 0
+        self.metrics["how_far_from_start_point"] = self.dis_to_start_pos.to(device='cpu')
+        last_goal_idx = self.num_goals - 1  # 或者用 len(...) 取终点索引
+        go_to_wall_phase = torch.logical_or(self.cur_goal_idx == 0,
+                                            self.cur_goal_idx == last_goal_idx)
         self.mode_flag = torch.where(
             go_to_wall_phase,
             (dist_to_goal > self.next_goal_threshold).float(),
-            torch.zeros_like(dist_to_goal)
+            torch.zeros_like(dist_to_goal),
         )
-        
+   
     def _set_debug_vis_impl(self, debug_vis: bool):
         # create markers if necessary for the first tome
         if debug_vis:

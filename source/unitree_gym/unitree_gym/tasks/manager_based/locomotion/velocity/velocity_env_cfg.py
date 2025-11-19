@@ -124,7 +124,7 @@ class CommandsCfg:
         resampling_time_range=(6.0,6.0 ),
         heading_control_stiffness=0.8,
         ranges=traverse_commands.TraverseCommandCfg.Ranges(
-            lin_vel_x=(0.3, 0.8), 
+            lin_vel_x=(0.0, 0.3), 
             heading=(-1.6, 1.6)
         ),
         clips= traverse_commands.TraverseCommandCfg.Clips(
@@ -201,7 +201,7 @@ class EventCfg:
     """Configuration for events."""
     reset_root_state = EventTerm(
         func= events.reset_root_state,
-        params = {'offset': 3.},
+        params = {'offset': 5.},
         mode="reset",
     )
     reset_robot_joints = EventTerm(
@@ -260,8 +260,8 @@ class EventCfg:
     # )
     push_by_setting_velocity = EventTerm( # Okay
         func = events.push_by_setting_velocity, 
-        params={'velocity_range':{"x":(-0.5, 0.5), "y":(-0.5, 0.5)}},
-        interval_range_s = (8. ,8. ),
+        params={'velocity_range':{"x":(-0.25, 0.25), "y":(-0.25, 0.25)}},
+        interval_range_s = (12. ,16. ),
         is_global_time= True, 
         mode="interval",
     )
@@ -283,20 +283,20 @@ class RewardsCfg:
 # Available Body strings: 
     reward_collision = RewTerm(
         func=rewards.reward_collision, 
-        weight=-10., 
+        weight=-10.0, 
         params={
             "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
         },
     )
-    reward_feet_edge = RewTerm(
-        func=rewards.reward_feet_edge, 
-        weight=-1.0, 
-        params={
-            "asset_cfg":SceneEntityCfg(name="robot", body_names=["FL_foot","FR_foot","RL_foot","RR_foot"]),
-            "sensor_cfg":SceneEntityCfg(name="contact_forces", body_names=".*_foot"),
-            "traverse_name":'base_traverse',
-        },
-    )
+    # reward_feet_edge = RewTerm(
+    #     func=rewards.reward_feet_edge, 
+    #     weight=-1.0, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg(name="robot", body_names=["FL_foot","FR_foot","RL_foot","RR_foot"]),
+    #         "sensor_cfg":SceneEntityCfg(name="contact_forces", body_names=".*_foot"),
+    #         "traverse_name":'base_traverse',
+    #     },
+    # )
     reward_torques = RewTerm(
         func=rewards.reward_torques, 
         weight=-0.00001, 
@@ -320,7 +320,7 @@ class RewardsCfg:
     )
     reward_ang_vel_xy = RewTerm(
         func=rewards.reward_ang_vel_xy, 
-        weight=-0.05, 
+        weight=-0.5, 
         params={
             "asset_cfg":SceneEntityCfg("robot"),
         },
@@ -349,10 +349,19 @@ class RewardsCfg:
     )
     reward_orientation = RewTerm(
         func=rewards.reward_orientation, 
-        weight=-1.0, 
+        weight=-5.0, 
         params={
             "asset_cfg":SceneEntityCfg("robot"),
             "traverse_name":'base_traverse',
+        },
+    )
+    reward_base_height = RewTerm(
+        func=rewards.reward_base_height,
+        weight=-2.0,
+        params={
+            "asset_cfg":SceneEntityCfg("robot"),
+            "target_height":0.27,
+            "falloff":0.06,
         },
     )
     reward_feet_stumble = RewTerm(
@@ -364,7 +373,7 @@ class RewardsCfg:
     )
     reward_tracking_goal_vel = RewTerm(
         func=rewards.reward_tracking_goal_vel, 
-        weight=1.5, 
+        weight=3.5, 
         params={
             "asset_cfg":SceneEntityCfg("robot"),
             "traverse_name":'base_traverse'

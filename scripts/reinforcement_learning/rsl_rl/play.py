@@ -64,7 +64,7 @@ import gymnasium as gym
 import time
 import torch
 
-from rsl_rl.runners import DistillationRunner, OnPolicyRunner
+from .modules.on_policy_runner_with_extractor import OnPolicyRunnerWithExtractor
 
 from isaaclab.devices import Se2Keyboard, Se2KeyboardCfg
 from isaaclab.envs import (
@@ -78,22 +78,30 @@ from isaaclab.managers import ObservationTermCfg as ObsTerm
 from isaaclab.utils.assets import retrieve_file_path
 from isaaclab.utils.dict import print_dict
 from isaaclab.utils.pretrained_checkpoint import get_published_pretrained_checkpoint
-from isaaclab_rl.rsl_rl import RslRlBaseRunnerCfg, RslRlVecEnvWrapper, export_policy_as_jit, export_policy_as_onnx
+from .exportor import export_teacher_policy_as_jit, export_teacher_policy_as_onnx
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config
 
 import unitree_gym.tasks  # noqa: F401
 
+from unitree_gym.tasks.manager_based.locomotion.velocity.envs import TraverseManagerBasedRLEnv
+from unitree_gym.tasks.manager_based.locomotion.velocity.config.quadruped.unitree_go2.agents.traverse_rl_cfg import (
+    TraverseRslRlOnPolicyRunnerCfg,
+)
+from .vecenv_wrapper import TraverseRslRlVecEnvWrapper
 
 @hydra_task_config(args_cli.task, args_cli.agent)
-def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: RslRlBaseRunnerCfg):
+def main(
+    env_cfg: TraverseManagerBasedRLEnv | ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg,
+    agent_cfg: TraverseRslRlOnPolicyRunnerCfg,
+):
     """Play with RSL-RL agent."""
     # grab task name for checkpoint path
     task_name = args_cli.task.split(":")[-1]
 
     # override configurations with non-hydra CLI arguments
-    agent_cfg: RslRlBaseRunnerCfg = cli_args.update_rsl_rl_cfg(agent_cfg, args_cli)
-    env_cfg.scene.num_envs = args_cli.num_envs if args_cli.num_envs is not None else 64
+    agent_cfg = cli_args.update_rsl_rl_cfg(agent_cfg, args_cli)
+    env_cfg.scene.num_envs = args_cli.num_envs if args_cli.num_envs is not None else env_cfg.scene.num_envs
 
     # set the environment seed
     # note: certain randomizations occur in the environment initialization so we set the seed here
@@ -109,11 +117,20 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         env_cfg.scene.terrain.terrain_generator.curriculum = False
 
     # disable randomization for play
-    env_cfg.observations.policy.enable_corruption = False
+    observations_cfg = getattr(env_cfg, "observations", None)
+    policy_obs_cfg = getattr(observations_cfg, "policy", None) if observations_cfg else None
+    if policy_obs_cfg is not None and hasattr(policy_obs_cfg, "enable_corruption"):
+        policy_obs_cfg.enable_corruption = False
     # remove random pushing
-    env_cfg.events.randomize_apply_external_force_torque = None
-    env_cfg.events.push_robot = None
-    env_cfg.curriculum.command_levels = None
+    events_cfg = getattr(env_cfg, "events", None)
+    if events_cfg is not None:
+        if hasattr(events_cfg, "randomize_apply_external_force_torque"):
+            events_cfg.randomize_apply_external_force_torque = None
+        if hasattr(events_cfg, "push_robot"):
+            events_cfg.push_robot = None
+    curriculum_cfg = getattr(env_cfg, "curriculum", None)
+    if curriculum_cfg is not None and hasattr(curriculum_cfg, "command_levels"):
+        curriculum_cfg.command_levels = None
 
     if args_cli.keyboard:
         env_cfg.scene.num_envs = 1
@@ -168,16 +185,11 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         env = gym.wrappers.RecordVideo(env, **video_kwargs)
 
     # wrap around environment for rsl-rl
-    env = RslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
+    env = TraverseRslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
 
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     # load previously trained model
-    if agent_cfg.class_name == "OnPolicyRunner":
-        runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
-    elif agent_cfg.class_name == "DistillationRunner":
-        runner = DistillationRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
-    else:
-        raise ValueError(f"Unsupported runner class: {agent_cfg.class_name}")
+    runner = OnPolicyRunnerWithExtractor(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
     runner.load(resume_path)
 
     # obtain the trained policy for inference
@@ -202,13 +214,13 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # export policy to onnx/jit
     export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
-    export_policy_as_jit(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.pt")
-    export_policy_as_onnx(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.onnx")
+    export_teacher_policy_as_jit(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.pt")
+    export_teacher_policy_as_onnx(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.onnx")
 
     dt = env.unwrapped.step_dt
 
     # reset environment
-    obs = env.get_observations()
+    obs, _ = env.get_observations()
     timestep = 0
     # simulate environment
     while simulation_app.is_running():

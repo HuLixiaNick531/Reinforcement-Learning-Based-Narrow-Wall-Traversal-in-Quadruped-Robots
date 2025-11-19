@@ -29,18 +29,20 @@ sys.path.insert(0, ROOT)
 sys.argv = [
     "train.py",
     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
-    "--headless",
-    "--num_envs=128",
+    "--logger=wandb",
+    "--log_project_name=go2",
+    # "--headless",
+    "--num_envs=512",
     "--max_iterations=10000",
 ]
 
 
 # sys.argv = [
 #     "play.py",
-#     "--task=RobotLab-Isaac-Velocity-Flat-Hexapod-v0",
-#     "--headless",
-#     "--load_run=hexapod_rough",
-#     "--checkpoint=/home/pp/unitree_gym/logs/rsl_rl/hexapod_flat/2025-09-08_17-41-15/model_9999.pt",
+#     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
+#     # "--headless",
+#     "--num_envs=4",
+#     "--load_run=2025-11-19_16-30-31",
 # ]
 
 
