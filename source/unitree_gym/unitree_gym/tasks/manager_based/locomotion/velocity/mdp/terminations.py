@@ -31,13 +31,14 @@ def terminate_episode(
     asset: Articulation = env.scene[asset_cfg.name]
     roll, pitch, _ = euler_xyz_from_quat(asset.data.root_state_w[:,3:7])
     # tighten attitude thresholds so impending falls end the episode sooner
-    roll_cutoff = torch.abs(wrap_to_pi(roll)) > 0.7
-    pitch_cutoff = torch.abs(wrap_to_pi(pitch)) > 0.7
+    roll_cutoff = torch.abs(wrap_to_pi(roll)) > 1.0
+    pitch_cutoff = torch.abs(wrap_to_pi(pitch)) > 1.0
     time_out_buf = env.episode_length_buf >= env.max_episode_length
     traverse_event: TraverseEvent =  env.traverse_manager.get_term('base_traverse')    
     reach_goal_cutoff = traverse_event.cur_goal_idx >= env.scene.terrain.cfg.terrain_generator.num_goals
     # treat base heights close to ground as failure to prevent crawling
-    height_cutoff = asset.data.root_state_w[:, 2] < 0.15
+    # 放宽高度阈值：从0.13提高到0.12，给机器人更多学习时间，避免轻微前倾就终止
+    height_cutoff = asset.data.root_state_w[:, 2] < 0.12
     time_out_buf |= reach_goal_cutoff
     reset_buf |= time_out_buf
     reset_buf |= roll_cutoff

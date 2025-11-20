@@ -174,18 +174,27 @@ def reward_tracking_goal_vel(
     cur_vel = asset.data.root_vel_w[:, :2]
     proj_vel = torch.sum(target_vel * cur_vel, dim=-1)
     command_vel = env.command_manager.get_command('base_velocity')[:, 0]
-    rew_move = torch.minimum(proj_vel, command_vel) / (command_vel + 1e-5)
+    
+    # 修复：确保 rew_move 始终非负，避免训练初期向后移动导致负奖励累积
+    # 如果机器人向后移动（proj_vel < 0），给予0奖励而不是负奖励
+    # 这样训练初期不会出现负的几千的episode sum
+    rew_move = torch.clamp(proj_vel, min=0.0) / (command_vel + 1e-5)
+    # 如果速度超过命令速度，给予额外奖励（但限制在合理范围内）
+    rew_move = torch.clamp(rew_move, min=0.0, max=1.0)
 
     # gate the reward if the base posture is unstable or too low
+    # 进一步放宽门控阈值，让机器人在尝试保持站立时也能获得奖励
     tilt = torch.norm(asset.data.projected_gravity_b[:, :2], dim=1)
-    tilt_gate = torch.clamp(1.0 - (tilt - 0.35) / 0.25, min=0.0, max=1.0)
+    # 进一步放宽tilt阈值：从0.4-0.7改为0.45-0.75，给机器人更多学习空间
+    tilt_gate = torch.clamp(1.0 - (tilt - 0.45) / 0.3, min=0.0, max=1.0)
     base_height = asset.data.root_pos_w[:, 2]
-    height_gate = torch.clamp((base_height - 0.18) / 0.08, min=0.0, max=1.0)
+    # 进一步放宽高度阈值：从0.15-0.23改为0.14-0.22，给机器人更多学习空间
+    height_gate = torch.clamp((base_height - 0.14) / 0.08, min=0.0, max=1.0)
     return rew_move * tilt_gate * height_gate
 
 def reward_tracking_yaw(     
     env: TraverseManagerBasedRLEnv, 
-    traverse_name : str, 
+    traverse_name: str, 
     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
     ) -> torch.Tensor:
     traverse_event: TraverseEvent =  env.traverse_manager.get_term(traverse_name)
@@ -203,8 +212,12 @@ def reward_base_height(
     ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
     base_height = asset.data.root_pos_w[:, 2]
-    height_error = torch.clamp(target_height - base_height, min=0.0)
-    return height_error / (falloff + 1e-5)
+    # 改为正奖励：使用指数衰减函数，鼓励保持接近目标高度
+    # 当高度接近target_height时奖励接近1，远离时奖励衰减
+    height_error = torch.abs(base_height - target_height)
+    # 使用指数衰减，falloff控制衰减速度
+    rew = torch.exp(-height_error / (falloff + 1e-5))
+    return rew
 
 class reward_delta_torques(ManagerTermBase):
     def __init__(self, cfg: RewardTermCfg, env: TraverseManagerBasedRLEnv):

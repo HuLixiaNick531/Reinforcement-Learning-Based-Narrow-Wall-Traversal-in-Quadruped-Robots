@@ -35,5 +35,7 @@ class TraverseRewardManager(RewardManager):
             self._episode_sums[name] += value
             # Update current reward for this step.
             self._step_reward[:, term_idx] = value / dt
-        self._reward_buf[:] = torch.clip(self._reward_buf[:], min=0.)
+        # 移除奖励裁剪：允许负奖励传递，让策略能够区分"稍微移动但姿态不稳定"和"完全不动"
+        # 这样策略才能学习到正确的行为，而不是简单地"尽量不动"来避免惩罚
+        # self._reward_buf[:] = torch.clip(self._reward_buf[:], min=0.)
         return self._reward_buf

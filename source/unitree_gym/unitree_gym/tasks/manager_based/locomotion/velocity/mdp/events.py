@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from isaaclab.envs import  ManagerBasedEnv
     from isaaclab.managers import EventTermCfg
 
+
 def reset_joints_by_offset(
     env: ManagerBasedEnv,
     env_ids: torch.Tensor,
@@ -59,6 +60,7 @@ def reset_root_state(
         torch.tensor((terrain_gen_cfg.size[1] + offset, 0, 0)).to(env.device)
     asset.write_root_pose_to_sim(torch.cat([positions, root_states[:, 3:7]], dim=-1), env_ids=env_ids)
     asset.write_root_velocity_to_sim(root_states[:, 7:13] , env_ids=env_ids) ## it mush need for init vel
+
 
 def randomize_actuator_gains(
     env: ManagerBasedEnv,
@@ -112,6 +114,7 @@ def randomize_actuator_gains(
             if isinstance(actuator, DCMotor) or isinstance(actuator, TraverseDCMotor):
                 asset.write_joint_damping_to_sim(damping, joint_ids=actuator.joint_indices, env_ids=env_ids)
 
+
 def randomize_rigid_body_com(
     env: ManagerBasedEnv,
     env_ids: torch.Tensor | None,
@@ -143,12 +146,13 @@ def randomize_rigid_body_com(
     # Set the new coms
     asset.root_physx_view.set_coms(coms, env_ids)
 
+
 def push_by_setting_velocity(
     env: ManagerBasedEnv,
     env_ids: torch.Tensor,
     velocity_range: dict[str, tuple[float, float]],
     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
-):  
+):
     asset: RigidObject | Articulation = env.scene[asset_cfg.name]
     vel_w = asset.data.root_vel_w[env_ids]
     range_list = [velocity_range.get(key, (0.0, 0.0)) for key in ["x", "y", "z", "roll", "pitch", "yaw"]]
@@ -157,6 +161,7 @@ def push_by_setting_velocity(
     vel_w[:,:2] = random_noise[:,:2]
     vel_w[:,2:] += random_noise[:,2:]
     asset.write_root_velocity_to_sim(vel_w, env_ids=env_ids)
+
 
 def random_camera_position(
     env: ManagerBasedEnv,
@@ -195,7 +200,8 @@ def random_camera_position(
         convention=convention,
         env_ids=torch.arange(env.num_envs, dtype=torch.int64, device=env.device),
     )
-    
+
+
 class randomize_rigid_body_material(ManagerTermBase):
     def __init__(self, cfg: EventTermCfg, env: ManagerBasedEnv):
         """Initialize the term.

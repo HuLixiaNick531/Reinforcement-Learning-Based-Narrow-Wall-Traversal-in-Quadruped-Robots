@@ -283,7 +283,7 @@ class RewardsCfg:
 # Available Body strings:
     reward_collision = RewTerm(
         func=rewards.reward_collision, 
-        weight=-10.0,
+        weight=-5.0,  # 降低权重：从-10.0改为-5.0，避免惩罚过重导致策略过于保守
         params={
             "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
         },
@@ -349,21 +349,21 @@ class RewardsCfg:
     )
     reward_orientation = RewTerm(
         func=rewards.reward_orientation, 
-        weight=-10.0,
+        weight=-5.0,  # 降低权重：从-10.0改为-5.0，避免惩罚过重导致策略过于保守
         params={
             "asset_cfg": SceneEntityCfg("robot"),
             "traverse_name": 'base_traverse',
         },
     )
-    # reward_base_height = RewTerm(
-    #     func=rewards.reward_base_height,
-    #     weight=-2.0,
-    #     params={
-    #         "asset_cfg":SceneEntityCfg("robot"),
-    #         "target_height":0.27,
-    #         "falloff":0.06,
-    #     },
-    # )
+    reward_base_height = RewTerm(
+        func=rewards.reward_base_height,
+        weight=3.0,  # 提高权重：强烈鼓励保持站立高度，防止机器人平躺或摔倒
+        params={
+            "asset_cfg":SceneEntityCfg("robot"),
+            "target_height":0.27,
+            "falloff":0.06,
+        },
+    )
     reward_feet_stumble = RewTerm(
         func=rewards.reward_feet_stumble, 
         weight=-1.0,
