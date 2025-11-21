@@ -18,6 +18,10 @@ from isaaclab.app import AppLauncher
 
 # local imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# allow running this file directly by setting up package context
+if __name__ == "__main__" and __package__ is None:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
+    __package__ = "scripts.reinforcement_learning.rsl_rl"
 import cli_args  # isort: skip
 from rl_utils import camera_follow
 

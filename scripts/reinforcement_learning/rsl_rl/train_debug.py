@@ -40,9 +40,9 @@ sys.argv = [
 # sys.argv = [
 #     "play.py",
 #     "--task=Isaac-Traverse-Walls-Unitree-Go2-v0",
-#     # "--headless",
+#     "--headless",
 #     "--num_envs=4",
-#     "--load_run=2025-11-19_16-30-31",
+#     "--load_run=2025-11-20_17-56-35",
 # ]
 
 

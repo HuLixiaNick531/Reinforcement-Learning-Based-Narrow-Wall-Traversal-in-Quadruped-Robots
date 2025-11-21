@@ -18,6 +18,9 @@ from isaaclab.app import AppLauncher
 
 # local imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+if __name__ == "__main__" and __package__ is None:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
+    __package__ = "scripts.reinforcement_learning.rsl_rl"
 import cli_args
 
 # add argparse arguments

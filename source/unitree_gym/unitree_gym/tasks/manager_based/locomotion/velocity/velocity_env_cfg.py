@@ -138,6 +138,7 @@ class TraverseEventsCfg:
     """Command specifications for the MDP."""
     base_traverse = traverses.TraverseEventsCfg(
         asset_name = 'robot',
+        next_goal_threshold=0.0,
         )
 
 
@@ -201,7 +202,7 @@ class EventCfg:
     """Configuration for events."""
     reset_root_state = EventTerm(
         func= events.reset_root_state,
-        params = {'offset': 5.},
+        params = {'offset': 3.5},
         mode="reset",
     )
     reset_robot_joints = EventTerm(
@@ -276,58 +277,277 @@ class EventCfg:
     )
 
 
+# @configclass
+# class RewardsCfg:
+#     """Reward terms for the MDP."""
+
+# # Available Body strings:
+#     reward_collision = RewTerm(
+#         func=rewards.undesired_contacts, 
+#         weight=-0.0,  # 降低权重：从-10.0改为-5.0，避免惩罚过重导致策略过于保守
+#         params={
+#             "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
+#         },
+#     )
+#     reward_hip_pos = RewTerm(
+#         func=rewards.reward_hip_pos, 
+#         weight=-0.5,
+#         params={
+#             "asset_cfg":SceneEntityCfg("robot", joint_names=".*_hip_joint"),
+#         },
+#     )
+#     # reward_feet_edge = RewTerm(
+#     #     func=rewards.reward_feet_edge, 
+#     #     weight=-1.0,
+#     #     params={
+#     #         "asset_cfg":SceneEntityCfg(name="robot", body_names=["FL_foot","FR_foot","RL_foot","RR_foot"]),
+#     #         "sensor_cfg":SceneEntityCfg(name="contact_forces", body_names=".*_foot"),
+#     #         "traverse_name":'base_traverse',
+#     #     },
+#     # )
+#     reward_torques = RewTerm(
+#         func=rewards.reward_torques, 
+#         weight=-2.5e-4,
+#         params={
+#             "asset_cfg": SceneEntityCfg("robot"),
+#         },
+#     )
+#     # reward_dof_error = RewTerm(
+#     #     func=rewards.reward_dof_error, 
+#     #     weight=-0.04,
+#     #     params={
+#     #         "asset_cfg": SceneEntityCfg("robot"),
+#     #     },
+#     # )
+#     joint_pos_penalty = RewTerm(
+#         func=mdp.joint_pos_penalty,
+#         weight=-1.0,
+#         params={
+#             "command_name": "base_velocity",
+#             "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
+#             "stand_still_scale": 5.0,
+#             "velocity_threshold": 0.5,
+#             "command_threshold": 0.1,
+#         },
+#     )
+#     reward_ang_vel_xy = RewTerm(
+#         func=rewards.reward_ang_vel_xy, 
+#         weight=-0.05,
+#         params={
+#             "asset_cfg": SceneEntityCfg("robot"),
+#         },
+#     )
+#     reward_action_rate = RewTerm(
+#         func=rewards.reward_action_rate, 
+#         weight=-0.1,
+#         params={
+#           "asset_cfg": SceneEntityCfg("robot"),
+#         },
+#     )
+#     reward_dof_acc = RewTerm(
+#         func=rewards.reward_dof_acc, 
+#         weight=-2.5e-7,
+#         params={
+#             "asset_cfg": SceneEntityCfg("robot"),
+#         },
+#     )
+#     lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
+#     flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=0.0)
+#     reward_base_height = RewTerm(
+#         func=rewards.reward_base_height,
+#         weight=5.0,  # 大幅提高权重：强烈鼓励保持站立高度，防止机器人向前摔倒
+#         params={
+#             "asset_cfg":SceneEntityCfg("robot"),
+#             "target_height":0.27,
+#             "falloff":0.06,
+#         },
+#     )
+#     # reward_feet_stumble = RewTerm(
+#     #     func=rewards.reward_feet_stumble, 
+#     #     weight=-1.0,
+#     #     params={
+#     #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
+#     #     },
+#     # )
+
+#     reward_tracking_goal_vel = RewTerm(
+#         func=rewards.reward_tracking_goal_vel, 
+#         weight=1.0,
+#         params={
+#             "asset_cfg": SceneEntityCfg("robot"),
+#             "traverse_name": 'base_traverse'
+#         },
+#     )
+#     reward_tracking_yaw = RewTerm(
+#         func=rewards.reward_tracking_yaw, 
+#         weight=0.5,
+#         params={
+#             "asset_cfg": SceneEntityCfg("robot"),
+#             "traverse_name": 'base_traverse'
+#         },
+#     )
+#     reward_delta_torques = RewTerm(
+#         func=rewards.reward_delta_torques, 
+#         weight=-1.0e-7,
+#         params={
+#             "asset_cfg": SceneEntityCfg("robot"),
+#         },
+#     )
+
+
 @configclass
 class RewardsCfg:
-    """Reward terms for the MDP."""
-
-# Available Body strings:
-    reward_collision = RewTerm(
-        func=rewards.reward_collision, 
-        weight=-5.0,  # 降低权重：从-10.0改为-5.0，避免惩罚过重导致策略过于保守
+    """Reward terms for the MDP.
+    ['base', 
+    'FL_hip', 
+    'FL_thigh', 
+    'FL_calf', 
+    'FL_foot', 
+    'FR_hip', 
+    'FR_thigh', 
+    'FR_calf', 
+    'FR_foot', 
+    'Head_upper', 
+    'Head_lower', 
+    'RL_hip', 
+    'RL_thigh', 
+    'RL_calf', 
+    'RL_foot', 
+    'RR_hip', 
+    'RR_thigh', 
+    'RR_calf',
+    'RR_foot']
+    """
+# Available Body strings: 
+    reward_common_upright = RewTerm(
+        func=rewards.reward_common_upright,
+        weight=-1.0,
         params={
-            "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
+            "asset_cfg": SceneEntityCfg("robot"),
         },
     )
-    # reward_feet_edge = RewTerm(
-    #     func=rewards.reward_feet_edge, 
-    #     weight=-1.0,
+    reward_common_smooth_action = RewTerm(
+        func=rewards.reward_common_smooth_action,
+        weight=-0.01,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+        },
+    )
+    reward_common_joint_deviation = RewTerm(
+        func=rewards.reward_common_joint_deviation,
+        weight=-0.2,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+        },
+    )
+    reward_flat_dist = RewTerm(
+        func=rewards.reward_flat_dist,
+        weight=0.5,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": "base_traverse",
+        },
+    )
+    reward_flat_speed = RewTerm(
+        func=rewards.reward_flat_speed,
+        weight=2.0,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": "base_traverse",
+        },
+    )
+    reward_flat_yaw = RewTerm(
+        func=rewards.reward_flat_yaw,
+        weight=1.0,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": "base_traverse",
+        },
+    )
+    reward_flat_away_wall = RewTerm(
+        func=rewards.reward_flat_away_wall,
+        weight=-0.5,
+        params={
+            "traverse_name": "base_traverse",
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names="base"),
+            "fn_small": 1.0,
+        },
+    )
+    reward_wall_dist = RewTerm(
+        func=rewards.reward_wall_dist,
+        weight=-0.5,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": "base_traverse",
+            "desired_offset": 0.0,
+        },
+    )
+    reward_wall_speed = RewTerm(
+        func=rewards.reward_wall_speed,
+        weight=2.0,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": "base_traverse",
+        },
+    )
+    reward_wall_yaw = RewTerm(
+        func=rewards.reward_wall_yaw,
+        weight=1.0,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "traverse_name": "base_traverse",
+        },
+    )
+    reward_wall_force = RewTerm(
+        func=rewards.reward_wall_force,
+        weight=-0.5,
+        params={
+            "traverse_name": "base_traverse",
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names="base"),
+            "fn_target": 5.0,
+        },
+    )
+
+
+
+    # reward_collision = RewTerm(
+    #     func=rewards.reward_collision, 
+    #     weight=-10., 
     #     params={
-    #         "asset_cfg":SceneEntityCfg(name="robot", body_names=["FL_foot","FR_foot","RL_foot","RR_foot"]),
-    #         "sensor_cfg":SceneEntityCfg(name="contact_forces", body_names=".*_foot"),
-    #         "traverse_name":'base_traverse',
+    #         "sensor_cfg":SceneEntityCfg("contact_forces", body_names=["base",".*_calf",".*_thigh"]),
     #     },
     # )
-    reward_torques = RewTerm(
-        func=rewards.reward_torques, 
-        weight=-0.00001,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-        },
-    )
-    reward_dof_error = RewTerm(
-        func=rewards.reward_dof_error, 
-        weight=-0.04,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-        },
-    )
-    reward_hip_pos = RewTerm(
-        func=rewards.reward_hip_pos, 
-        weight=-0.5,
-        params={
-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*_hip_joint"),
-        },
-    )
-    reward_ang_vel_xy = RewTerm(
-        func=rewards.reward_ang_vel_xy, 
-        weight=-0.5,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-        },
-    )
+    # reward_torques = RewTerm(
+    #     func=rewards.reward_torques, 
+    #     weight=-0.00001, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #     },
+    # )
+    # reward_dof_error = RewTerm(
+    #     func=rewards.reward_dof_error, 
+    #     weight=-0.04, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #     },
+    # )
+    # reward_hip_pos = RewTerm(
+    #     func=rewards.reward_hip_pos, 
+    #     weight=-0.5, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot", joint_names=".*_hip_joint"),
+    #     },
+    # )
+    # reward_ang_vel_xy = RewTerm(
+    #     func=rewards.reward_ang_vel_xy, 
+    #     weight=-0.3, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #     },
+    # )
     reward_action_rate = RewTerm(
         func=rewards.reward_action_rate, 
-        weight=-0.1,
+        weight=-0.3,
         params={
           "asset_cfg": SceneEntityCfg("robot"),
         },
@@ -339,62 +559,46 @@ class RewardsCfg:
             "asset_cfg": SceneEntityCfg("robot"),
         },
     )
-    reward_lin_vel_z = RewTerm(
-        func=rewards.reward_lin_vel_z, 
-        weight=-1.0,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-            "traverse_name": 'base_traverse',
-        },
-    )
-    reward_orientation = RewTerm(
-        func=rewards.reward_orientation, 
-        weight=-5.0,  # 降低权重：从-10.0改为-5.0，避免惩罚过重导致策略过于保守
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-            "traverse_name": 'base_traverse',
-        },
-    )
-    reward_base_height = RewTerm(
-        func=rewards.reward_base_height,
-        weight=3.0,  # 提高权重：强烈鼓励保持站立高度，防止机器人平躺或摔倒
-        params={
-            "asset_cfg":SceneEntityCfg("robot"),
-            "target_height":0.27,
-            "falloff":0.06,
-        },
-    )
-    reward_feet_stumble = RewTerm(
-        func=rewards.reward_feet_stumble, 
-        weight=-1.0,
-        params={
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
-        },
-    )
-    reward_tracking_goal_vel = RewTerm(
-        func=rewards.reward_tracking_goal_vel, 
-        weight=2.0,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-            "traverse_name": 'base_traverse'
-        },
-    )
-    reward_tracking_yaw = RewTerm(
-        func=rewards.reward_tracking_yaw, 
-        weight=0.5,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-            "traverse_name": 'base_traverse'
-        },
-    )
-    reward_delta_torques = RewTerm(
-        func=rewards.reward_delta_torques, 
-        weight=-1.0e-7,
-        params={
-            "asset_cfg": SceneEntityCfg("robot"),
-        },
-    )
-
+    # reward_lin_vel_z = RewTerm(
+    #     func=rewards.reward_lin_vel_z, 
+    #     weight=-1.0, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #         "traverse_name":'base_traverse',
+    #     },
+    # )
+    # flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=-2.0)
+    # reward_tracking_goal_vel = RewTerm(
+    #     func=rewards.reward_tracking_goal_vel, 
+    #     weight=15.0,
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #         "traverse_name":'base_traverse'
+    #     },
+    # )
+    # reward_feet_contact_stand_still = RewTerm(
+    #     func=rewards.feet_contact_stand_still,
+    #     weight=0.2,
+    #     params={
+    #         "command_name": "base_velocity",
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
+    #     },
+    # )
+    # reward_tracking_yaw = RewTerm(
+    #     func=rewards.reward_tracking_yaw, 
+    #     weight=10, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #         "traverse_name":'base_traverse'
+    #     },
+    # )
+    # reward_delta_torques = RewTerm(
+    #     func=rewards.reward_delta_torques, 
+    #     weight=-1.0e-7, 
+    #     params={
+    #         "asset_cfg":SceneEntityCfg("robot"),
+    #     },
+    # )
 
 
 @configclass
